@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportOrderLoanMapper">
+  <resultMap id="BaseResultMap" type="com.mod.loan.model.ReportOrderLoan">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="day_key" jdbcType="DATE" property="dayKey" />
+    <result column="merchant" jdbcType="VARCHAR" property="merchant" />
+    <result column="arrive_cnt" jdbcType="INTEGER" property="arriveCnt" />
+    <result column="arrive_amount" jdbcType="DECIMAL" property="arriveAmount" />
+    <result column="first_cnt" jdbcType="INTEGER" property="firstCnt" />
+    <result column="first_amount" jdbcType="DECIMAL" property="firstAmount" />
+    <result column="second_cnt" jdbcType="INTEGER" property="secondCnt" />
+    <result column="second_amount" jdbcType="DECIMAL" property="secondAmount" />
+    <result column="old_cnt" jdbcType="INTEGER" property="oldCnt" />
+    <result column="old_amount" jdbcType="DECIMAL" property="oldAmount" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <insert id="reportOrderLoan">
+  	set @indate=#{date};
+  	set @day_cnt=1;
+	insert into  report_order_loan(day_key,merchant,arrive_cnt,arrive_amount,first_cnt,second_cnt,old_cnt,first_amount,second_amount,old_amount,total_fee)
+	(SELECT 
+	date(t1.arrive_time) as day_key,
+	t1.merchant as merchant,
+	count(t1.id) as arrive_cnt,
+	sum(t1.actual_money) as arrive_amount,
+	count(case when t1.user_type=1 then t1.id else null end) as first_cnt,
+	count(case when t1.user_type=2 then t1.id else null end) as second_cnt,
+	count(case when t1.user_type=3 then t1.id else null end) as old_cnt,
+	
+	sum(case when t1.user_type=1 then t1.actual_money  else 0 end ) as first_amount,
+	sum(case when t1.user_type=2 then t1.actual_money  else 0 end ) as second_amount,
+	sum(case when t1.user_type=3 then t1.actual_money  else 0 end ) as old_amount,
+	sum(t1.total_fee) as total_fee
+	FROM tb_order t1 
+	where 1=1
+	and t1.arrive_time>=DATE_SUB( @indate,INTERVAL @day_cnt day) 
+	and t1.arrive_time &lt; DATE_add( @indate,INTERVAL 1 day)
+	GROUP BY 1,2) on DUPLICATE key update 
+	arrive_cnt=VALUES(arrive_cnt)
+	,arrive_amount=VALUES(arrive_amount)
+	,first_cnt=VALUES(first_cnt)
+	,first_amount=VALUES(first_amount)
+	,second_cnt=VALUES(second_cnt)
+	,second_amount=VALUES(second_amount)
+	,old_cnt=VALUES(old_cnt)
+	,old_amount=VALUES(old_amount)
+	,total_fee=VALUES(total_fee)
+  </insert>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportPartnerEffectMapper">
+  <resultMap id="BaseResultMap" type="com.mod.loan.model.ReportPartnerEffect">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="day_key" jdbcType="DATE" property="dayKey" />
+    <result column="user_origin" jdbcType="VARCHAR" property="userOrigin" />
+    <result column="reg_cnt" jdbcType="INTEGER" property="regCnt" />
+    <result column="login_cnt" jdbcType="INTEGER" property="loginCnt" />
+    <result column="real_name_cnt" jdbcType="INTEGER" property="realNameCnt" />
+    <result column="submit_order_cnt" jdbcType="INTEGER" property="submitOrderCnt" />
+    <result column="first_submit_cnt" jdbcType="INTEGER" property="firstSubmitCnt" />
+    <result column="first_submit_amount" jdbcType="DECIMAL" property="firstSubmitAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="merchant" jdbcType="VARCHAR" property="merchant" />
+  </resultMap>
+  <insert id="reportPartnerEffect" >
+		set @indate=#{date};
+		set @day_cnt=#{day};		
+	    insert into  report_partner_effect(day_key,merchant,user_origin,reg_cnt,login_cnt,real_name_cnt,submit_order_cnt,first_submit_cnt,first_submit_amount)
+		(
+		SELECT 
+		date(t1.create_time) as day_key
+		,t1.merchant as merchant
+		,t1.user_origin as user_origin
+		,count(t1.id) as reg_cnt
+		,count(t1.login_flag) as login_cnt
+		,count(t2.uid) as real_name_cnt
+		,count(t1.order_no) as submit_order_cnt
+		,count(t1.repay_time) as first_submit_cnt
+		,sum(case when t1.repay_time is not null then t1.borrow_money else 0 end) as first_submit_amount
+		from
+		(
+		SELECT  a.id,a.user_origin,a.create_time,a.merchant,b.id as login_flag,c.order_no,c.repay_time,c.borrow_money
+		from tb_user a 
+		left JOIN tb_user_device     b on a.id=b.uid
+		left JOIN tb_order           c on a.id=c.uid and c.user_type in (1,2) 
+		where  1=1
+		and a.create_time>=date_sub(@indate, INTERVAL @day_cnt DAY)
+		and a.create_time &lt;date_add(@indate, INTERVAL 1 DAY)
+		and a.merchant = #{merchant}
+		GROUP BY 1
+		)t1
+		left JOIN tb_user_ident   t2 on t1.id=t2.uid and t2.real_name=2
+		GROUP BY 1,2,3
+		)on DUPLICATE key update 
+		reg_cnt=VALUES(reg_cnt)
+		,login_cnt=VALUES(login_cnt)
+		,real_name_cnt=VALUES(real_name_cnt)
+		,submit_order_cnt=VALUES(submit_order_cnt)
+		,first_submit_cnt=VALUES(first_submit_cnt)
+		,first_submit_amount=VALUES(first_submit_amount)
+  </insert>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportOrderRepayMapper">
+  <resultMap id="BaseResultMap" type="com.mod.loan.model.ReportOrderRepay">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="day_key" jdbcType="DATE" property="dayKey" />
+    <result column="merchant" jdbcType="VARCHAR" property="merchant" />
+    <result column="should_repay_cnt" jdbcType="INTEGER" property="shouldRepayCnt" />
+    <result column="early_repay_cnt" jdbcType="INTEGER" property="earlyRepayCnt" />
+    <result column="normal_repay_cnt" jdbcType="INTEGER" property="normalRepayCnt" />
+    <result column="overdue_repay_cnt" jdbcType="INTEGER" property="overdueRepayCnt" />
+    <result column="overdue_cnt" jdbcType="INTEGER" property="overdueCnt" />
+    <result column="bad_cnt" jdbcType="INTEGER" property="badCnt" />
+    <result column="overdue1_repay_cnt" jdbcType="INTEGER" property="overdue1RepayCnt" />
+    <result column="overdue3_repay_cnt" jdbcType="INTEGER" property="overdue3RepayCnt" />
+    <result column="overdue7_repay_cnt" jdbcType="INTEGER" property="overdue7RepayCnt" />
+    <result column="overdue15_repay_cnt" jdbcType="INTEGER" property="overdue15RepayCnt" />
+    <result column="repay_amount" jdbcType="DECIMAL" property="repayAmount" />
+    <result column="real_repay_amount" jdbcType="DECIMAL" property="realRepayAmount" />
+    <result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+    <result column="overdue_fee" jdbcType="DECIMAL" property="overdueFee" />
+    <result column="reduce_money" jdbcType="DECIMAL" property="reduceMoney" />
+    <result column="overdue_repay_amount" jdbcType="DECIMAL" property="overdueRepayAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <insert id="reportOrderRepay"  >
+ 	set @indate=#{date};
+	set @day_cnt=#{day};
+	insert into  report_order_repay(day_key,merchant,should_repay_cnt,early_repay_cnt,normal_repay_cnt,overdue_repay_cnt,overdue_cnt,bad_cnt
+	,overdue1_repay_cnt,overdue3_repay_cnt,overdue7_repay_cnt,overdue15_repay_cnt,repay_amount,real_repay_amount,pay_amount,overdue_fee,reduce_money,overdue_repay_amount)
+	(SELECT 
+	date(od.repay_time) as day_key
+	,od.merchant as merchant
+	,count(id) as should_repay_cnt 
+	,count(case when od.status=41 and  DATEDIFF(od.real_repay_time,od.repay_time) &lt;0 then od.id else null end) as early_repay_cnt 
+	,count(case when od.status=41 and  DATEDIFF(od.real_repay_time,od.repay_time)>=0 then od.id else null end) as normal_repay_cnt  
+	,count(case when od.status=42 then od.id else null end) as overdue_repay_cnt  
+	,count(case when od.status=33 then od.id else null end) as overdue_cnt 
+	,count(case when od.status=34 then od.id else null end) as bad_cnt  
+	,count(case when od.status=42 and  od.overdue_day&lt;=1 then od.id else null end) as overdue1_repay_cnt  
+	,count(case when od.status=42 and  od.overdue_day&lt;=3 then od.id else null end) as overdue3_repay_cnt  
+	,count(case when od.status=42 and  od.overdue_day&lt;=7 then od.id else null end) as overdue7_repay_cnt 
+	,count(case when od.status=42 and  od.overdue_day&lt;=15 then od.id else null end) as overdue15_repay_cnt 
+	,sum(od.borrow_money) as repay_amount
+	,sum(case when od.status in (41,42) then od.should_repay else 0 end ) as real_repay_amount
+	,sum(od.actual_money) as pay_amount
+	,sum(case when od.status in (41,42) then od.overdue_fee else 0 end) as overdue_fee 
+	,sum(reduce_money) as reduce_money
+	,sum(case when od.status in (33,34) then od.should_repay else 0 end) as overdue_repay_amount
+	from  tb_order od 
+	where od.status>30 and od.status &lt;50 and od.repay_time>=DATE_SUB( @indate,INTERVAL @day_cnt day) and od.repay_time &lt;DATE_add( @indate,INTERVAL 1 day)
+	GROUP BY 1,2) on DUPLICATE key update 
+	should_repay_cnt=VALUES(should_repay_cnt)
+	,early_repay_cnt=VALUES(early_repay_cnt)
+	,normal_repay_cnt=VALUES(normal_repay_cnt)
+	,overdue_repay_cnt=VALUES(overdue_repay_cnt)
+	,overdue_cnt=VALUES(overdue_cnt)
+	,bad_cnt=VALUES(bad_cnt)
+	,overdue1_repay_cnt=VALUES(overdue1_repay_cnt)
+	,overdue3_repay_cnt=VALUES(overdue3_repay_cnt)
+	,overdue7_repay_cnt=VALUES(overdue7_repay_cnt)
+	,overdue15_repay_cnt=VALUES(overdue15_repay_cnt)
+	,repay_amount=VALUES(repay_amount)
+	,real_repay_amount=VALUES(real_repay_amount)
+	,pay_amount=VALUES(pay_amount)
+	,overdue_fee=VALUES(overdue_fee)
+	,reduce_money=VALUES(reduce_money)
+	,overdue_repay_amount=VALUES(overdue_repay_amount)
+	;
+  </insert>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.MessageVoiceMapper">
+  <resultMap id="BaseResultMap" type="com.mod.loan.model.MessageVoice">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="uid" jdbcType="BIGINT" property="uid" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="call_id" jdbcType="VARCHAR" property="callId" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <select id="findLatestByCallId" resultMap="BaseResultMap">
+    select * from tb_message_voice where call_id=#{callId} order by create_time desc limit 1;
+  </select>
+</mapper>

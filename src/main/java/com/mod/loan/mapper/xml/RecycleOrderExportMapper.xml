@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.RecycleOrderExportMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.RecycleOrderExport">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+		<result column="manager_id" jdbcType="BIGINT" property="managerId" />
+		<result column="param" jdbcType="VARCHAR" property="param" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<select id="findByStatus" resultMap="BaseResultMap">
+		select * from tb_recycle_order_export where status = #{status} limit 5
+	</select>
+	
+	<select id="selectOverdueUserMessage" resultType="map">
+		select o.create_time,u.user_name,u.user_phone,u.user_cert_no,m.merchant_app as 'merchant',o.borrow_money,o.overdue_fee,o.actual_money,0 as 'should_repay_interests',0 as 'should_repay_penalty',o.should_repay,
+		ui.direct_contact_name,ui.direct_contact,ui.direct_contact_phone,ui.others_contact_name,ui.others_contact,ui.others_contact_phone,
+		o.uid,
+		SUBSTRING_INDEX(GROUP_CONCAT(mm.task_id order by mm.id),',',-1) as 'mobileTaskId',
+		SUBSTRING_INDEX(GROUP_CONCAT(ual.task_id order by ual.create_time),',',-1) as 'addressListTaskId'
+		from tb_order o
+		left join tb_user u on u.id = o.uid
+		left join tb_user_info ui on ui.uid = o.uid
+		left join tb_moxie_mobile mm on mm.uid = o.uid
+		left join tb_user_address_list ual on ual.uid = o.uid
+		left join tb_merchant m on m.merchant_alias = o.merchant
+        <where>
+            <if test="orderStatus !=null">
+                and o.status=#{orderStatus}
+            </if>
+            <if test="followUserId !=null">
+                and o.follow_user_id=#{followUserId}
+            </if>
+            <if test="merchant !=null">
+                and m.merchant_alias=#{merchant}
+            </if>
+            <if test="overdueDayDown !=null">
+                and o.overdue_day>=#{overdueDayDown}
+            </if>
+            <if test="overdueDayUp !=null">
+                and o.overdue_day &lt;=#{overdueDayUp}
+            </if>
+            <if test="repayTimeDown !=null">
+                and o.repay_time>=#{repayTimeDown}
+            </if>
+            <if test="repayTimeUp !=null">
+                and o.repay_time &lt;=#{repayTimeUp}
+            </if>
+            <if test="userType !=null">
+                and o.user_type=#{userType}
+            </if>
+            <if test="userPhone !=null">
+                and u.user_phone=#{userPhone}
+            </if>
+        </where>
+        GROUP BY o.uid
+    </select>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.MerchantMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.Merchant">
+		<!-- WARNING - @mbg.generated -->
+		<id column="merchant_alias" jdbcType="VARCHAR" property="merchantAlias" />
+		<result column="merchant_name" jdbcType="VARCHAR" property="merchantName" />
+		<result column="merchant_app" jdbcType="VARCHAR" property="merchantApp" />
+		<result column="merchant_app_ios" jdbcType="VARCHAR" property="merchantAppIos" />
+		<result column="merchant_zfb" jdbcType="VARCHAR" property="merchantZfb" />
+		<result column="merchant_status" jdbcType="TINYINT" property="merchantStatus" />
+		<result column="merchant_channel" jdbcType="VARCHAR" property="merchantChannel" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	
+	<select id="selectMerchantAliasByStatus" resultMap="BaseResultMap">
+		select merchant_alias from tb_merchant where merchant_status = #{status}
+	</select>
+	
+</mapper>
