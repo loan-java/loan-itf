@@ -10,20 +10,20 @@ import com.mod.loan.mapper.BlacklistMapper;
 
 @Component
 public class BlacklistTask {
-	
-	public static final Logger logger = LoggerFactory.getLogger(BlacklistTask.class);
 
-	@Autowired
-	BlacklistMapper blacklistMapper;
+    public static final Logger logger = LoggerFactory.getLogger(BlacklistTask.class);
 
-	@Scheduled(cron = "0 0 2 * * ?")
-	public void blacklistTask() {
-		try {
-			logger.info("黑名单失效定时开始");
-			blacklistMapper.blacklistTask();
-		} catch (Exception e) {
-			logger.error("黑名单失效定时异常", e);
-		}
-	}
-	
+    @Autowired
+    BlacklistMapper blacklistMapper;
+
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void blacklistTask() {
+        try {
+            logger.info("黑名单失效定时开始");
+            blacklistMapper.blacklistTask();
+        } catch (Exception e) {
+            logger.error("黑名单失效定时异常", e);
+        }
+    }
+
 }
