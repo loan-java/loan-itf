@@ -24,15 +24,6 @@ public interface OrderMapper extends MyBaseMapper<Order> {
      */
     int updateOverdueFee();
 
-    /**
-     * 查询逾期或即将逾期的订单
-     *
-     * @param status
-     * @param op
-     * @param days
-     * @return
-     */
-    List<Map<String, Object>> findByStatusAndOverdays(@Param("status") Integer status, @Param("op") String op, @Param("days") Integer days);
 	/**
 	 * 更新利息费用
 	 * @return

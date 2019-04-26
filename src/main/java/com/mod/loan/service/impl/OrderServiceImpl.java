@@ -79,21 +79,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         }
     }
 
-	@Override
-	public int updateToBadDebt() {
-		return orderMapper.updateToBadDebt();
-	}
-
-	@Override
-	public List<Order> findByRepayTime(String repayTime) {
-		return orderMapper.findByRepayTime(repayTime);
-	}
+    @Override
+    public List<Order> findByRepayTime(String repayTime) {
+        return orderMapper.findByRepayTime(repayTime);
+    }
 
     @Override
     public int updateToBadDebt() {
         return orderMapper.updateToBadDebt();
     }
 
+    @Override
     public void orderCallBack(User user, String orderNo, Integer orderStatus) {
 
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
