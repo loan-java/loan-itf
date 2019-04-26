@@ -6,6 +6,7 @@ import java.util.Map;
 import com.mod.loan.common.mapper.BaseService;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderPay;
+import com.mod.loan.model.User;
 
 public interface OrderService extends BaseService<Order, Long> {
 
@@ -14,6 +15,8 @@ public interface OrderService extends BaseService<Order, Long> {
 	void updatePayCallbackInfo(Order order, OrderPay orderPay);
 
 	void updateOverdueInfo();
+
+	void updateInterestFee();
 
 	List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days);
 
@@ -27,4 +30,10 @@ public interface OrderService extends BaseService<Order, Long> {
 	int updateToBadDebt();
 
     List<Order> findByRepayTime(String repayTime);
+	void orderCallBack(User user, String orderNo, Integer orderStatus);
+
+	List<Order> findOverdueOrders();
+
+	List<Order> findBadOrders();
+
 }
