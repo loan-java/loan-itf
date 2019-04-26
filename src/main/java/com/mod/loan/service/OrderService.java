@@ -26,4 +26,5 @@ public interface OrderService extends BaseService<Order, Long> {
 
 	int updateToBadDebt();
 
+    List<Order> findByRepayTime(String repayTime);
 }

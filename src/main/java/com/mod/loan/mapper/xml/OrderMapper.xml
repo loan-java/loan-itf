@@ -59,4 +59,13 @@
 		update tb_order set order_version=order_version+1 where id=#{orderId}
 	</update>
 
+	<select id="findByRepayTime"  resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			tb_order
+		WHERE
+			`status` = 31
+			AND repay_time = #{repayTime};
+	</select>
 </mapper>

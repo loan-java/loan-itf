@@ -69,5 +69,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 	public int updateToBadDebt() {
 		return orderMapper.updateToBadDebt();
 	}
-	
+
+	@Override
+	public List<Order> findByRepayTime(String repayTime) {
+		return orderMapper.findByRepayTime(repayTime);
+	}
+
 }

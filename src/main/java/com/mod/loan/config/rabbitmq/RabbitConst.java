@@ -12,4 +12,5 @@ public class RabbitConst {
 	public final static String queue_moxie_mobile = "queue_moxie_mobile"; // 魔蝎运营商
 	public final static String queue_moxie_zfb = "queue_moxie_zfb"; // 魔蝎支付宝
 
+	public static String baofoo_queue_repay_order_query = "baofoo_queue_repay_order_query";
 }
