@@ -25,6 +25,12 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	int updateOverdueFee();
 
 	/**
+	 * 更新利息费用
+	 * @return
+	 */
+	int updateInterestFee();
+
+	/**
 	 * 查询逾期或即将逾期的订单
 	 * 
 	 * @param status

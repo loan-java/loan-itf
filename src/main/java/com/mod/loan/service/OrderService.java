@@ -16,6 +16,8 @@ public interface OrderService extends BaseService<Order, Long> {
 
 	void updateOverdueInfo();
 
+	void updateInterestFee();
+
 	List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days);
 
 	/**

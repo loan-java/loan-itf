@@ -33,6 +33,15 @@ public class OrderTask {
         }
     }
 
+    @Scheduled(cron = "0 1 0 * * ?")
+    public void updateInterestFee() {
+        try {
+            orderService.updateInterestFee();
+        } catch (Exception e) {
+            logger.error("更新利息费用计算定时异常", e);
+        }
+    }
+
     @Scheduled(cron = "0 3 0 * * ?")
     public void callBackOverdueOrders() {
         try {

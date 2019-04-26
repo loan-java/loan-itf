@@ -42,6 +42,13 @@
 	    where status=33 and DATEDIFF(NOW(),repay_time)>0
 	</update>
 
+	<update id="updateInterestFee">
+		update tb_order
+	    set interest_fee = borrow_money*interest_rate/1000*DATEDIFF(NOW(),create_time) ,
+	    should_repay = borrow_money+borrow_money*overdue_rate/100*DATEDIFF(NOW(),repay_time)+interest_fee-reduce_money-had_repay
+	    where status > 30 and status &lt; 40 and DATEDIFF(NOW(),create_time)>0
+	</update>
+
 	<update id="updateToBadDebt" >
 		update tb_order set status = 34 where status=33 and DATEDIFF(NOW(),repay_time) >= 30
 	</update>

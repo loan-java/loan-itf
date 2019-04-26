@@ -29,84 +29,90 @@ import com.mod.loan.service.OrderService;
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
-	@Autowired
-	private OrderMapper orderMapper;
-	@Autowired
-	private OrderPayMapper orderPayMapper;
-	@Autowired
-	private RabbitTemplate rabbitTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private OrderPayMapper orderPayMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
-	@Override
-	public void updatePayInfo(Order order, OrderPay orderPay) {
-		if (order != null) {
-			orderMapper.updateByPrimaryKeySelective(order);
-		}
-		orderPayMapper.insertSelective(orderPay);
-	}
+    @Override
+    public void updatePayInfo(Order order, OrderPay orderPay) {
+        if (order != null) {
+            orderMapper.updateByPrimaryKeySelective(order);
+        }
+        orderPayMapper.insertSelective(orderPay);
+    }
 
-	@Override
-	public void updatePayCallbackInfo(Order order, OrderPay orderPay) {
-		orderMapper.updateByPrimaryKeySelective(order);
-		orderPayMapper.updateByPrimaryKeySelective(orderPay);
-	}
+    @Override
+    public void updatePayCallbackInfo(Order order, OrderPay orderPay) {
+        orderMapper.updateByPrimaryKeySelective(order);
+        orderPayMapper.updateByPrimaryKeySelective(orderPay);
+    }
 
-	@Override
-	public void updateOverdueInfo() {
-		int numOne = orderMapper.updateToOverdue();
-		logger.info("今日逾期订单数为：{}", numOne);
-		int numTwo = orderMapper.updateOverdueFee();
-		logger.info("逾期费用更新完毕，影响行数为：{}", numTwo);
-	}
+    @Override
+    public void updateOverdueInfo() {
+        int numOne = orderMapper.updateToOverdue();
+        logger.info("今日逾期订单数为：{}", numOne);
+        int numTwo = orderMapper.updateOverdueFee();
+        logger.info("逾期费用更新完毕，影响行数为：{}", numTwo);
+    }
 
-	@Override
-	public List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days) {
-		return orderMapper.findByStatusAndOverdays(status, op, days);
-	}
+    @Override
+    public void updateInterestFee() {
+        int interestFee = orderMapper.updateInterestFee();
+        logger.info("利息费用更新完毕，影响行数为：{}", interestFee);
+    }
 
-	@Override
-	public void modifyOrderAuditAgain(int minute) {
-		List<Order> list = orderMapper.findOrderWaitAutoAudit(minute);
-		for (Order order : list) {
-			rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, new RiskAuditMessage(order.getId(), order.getMerchant(), 1, order.getUid(), null));
-			orderMapper.updateOrderVersion(order.getId());
-		}
-	}
+    @Override
+    public List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days) {
+        return orderMapper.findByStatusAndOverdays(status, op, days);
+    }
 
-	@Override
-	public int updateToBadDebt() {
-		return orderMapper.updateToBadDebt();
-	}
+    @Override
+    public void modifyOrderAuditAgain(int minute) {
+        List<Order> list = orderMapper.findOrderWaitAutoAudit(minute);
+        for (Order order : list) {
+            rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, new RiskAuditMessage(order.getId(), order.getMerchant(), 1, order.getUid(), null));
+            orderMapper.updateOrderVersion(order.getId());
+        }
+    }
 
-	public void orderCallBack(User user, String orderNo, Integer orderStatus) {
+    @Override
+    public int updateToBadDebt() {
+        return orderMapper.updateToBadDebt();
+    }
 
-		JSONObject object = JSONObject.parseObject(user.getCommonInfo());
-		object.put("orderNo", orderNo);
-		object.put("orderType", OrderTypeEnum.JK.getCode());
-		switch (orderStatus) {
-			case 33:
-				object.put("orderStatus", OrderStatusEnum.OVERDUE.getCode());
-				object.put("payStatus", PayStatusEnum.PAYED.getCode());
-				object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
-			case 34:
-				object.put("orderStatus", OrderStatusEnum.BAD_DEBT.getCode());
-				object.put("payStatus", PayStatusEnum.PAYED.getCode());
-				object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
-			default:
-				break;
-		}
+    public void orderCallBack(User user, String orderNo, Integer orderStatus) {
 
-		CallBackJuHeUtil.callBack("", object);
-	}
+        JSONObject object = JSONObject.parseObject(user.getCommonInfo());
+        object.put("orderNo", orderNo);
+        object.put("orderType", OrderTypeEnum.JK.getCode());
+        switch (orderStatus) {
+            case 33:
+                object.put("orderStatus", OrderStatusEnum.OVERDUE.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 34:
+                object.put("orderStatus", OrderStatusEnum.BAD_DEBT.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            default:
+                break;
+        }
 
-	@Override
-	public List<Order> findOverdueOrders() {
-		return orderMapper.findOverdueOrders();
-	}
+        CallBackJuHeUtil.callBack("", object);
+    }
 
-	@Override
-	public List<Order> findBadOrders() {
-		return orderMapper.findBadOrders();
-	}
+    @Override
+    public List<Order> findOverdueOrders() {
+        return orderMapper.findOverdueOrders();
+    }
+
+    @Override
+    public List<Order> findBadOrders() {
+        return orderMapper.findBadOrders();
+    }
 
 }
