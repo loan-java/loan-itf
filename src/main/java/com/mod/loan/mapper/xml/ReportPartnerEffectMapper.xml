@@ -18,8 +18,6 @@
     <result column="merchant" jdbcType="VARCHAR" property="merchant" />
   </resultMap>
   <insert id="reportPartnerEffect" >
-		set @indate=#{date};
-		set @day_cnt=#{day};		
 	    insert into  report_partner_effect(day_key,merchant,user_origin,reg_cnt,login_cnt,real_name_cnt,submit_order_cnt,first_submit_cnt,first_submit_amount)
 		(
 		SELECT 
@@ -39,8 +37,8 @@
 		left JOIN tb_user_device     b on a.id=b.uid
 		left JOIN tb_order           c on a.id=c.uid and c.user_type in (1,2) 
 		where  1=1
-		and a.create_time>=date_sub(@indate, INTERVAL @day_cnt DAY)
-		and a.create_time &lt;date_add(@indate, INTERVAL 1 DAY)
+		and a.create_time>=date_sub(#{date}, INTERVAL #{day} DAY)
+		and a.create_time &lt;date_add(#{date}, INTERVAL 1 DAY)
 		and a.merchant = #{merchant}
 		GROUP BY 1
 		)t1

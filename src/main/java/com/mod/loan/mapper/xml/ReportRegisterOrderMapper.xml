@@ -16,25 +16,23 @@
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 	</resultMap>
 	<insert id="reportRegisterOrder">
-		set @indate=#{date};
-		set @day_cnt=1;
 		INSERT INTO `report_register_order` (`day_key`, `merchant`, `register_cnt`, `realname_cnt`, `zfb_cnt`, `mobile_cnt`, `order_cnt`, `first_cnt`, `second_cnt`, `old_cnt`)
 		(
 			SELECT a.create_time as 'day_key',a.merchant,IFNULL(a.register_cnt,0) as 'register_cnt',IFNULL(b.realname_cnt,0) as 'realname_cnt',IFNULL(c.zfb_cnt,0) as 'zfb_cnt',IFNULL(d.mobile_cnt,0) as 'mobile_cnt',IFNULL(e.order_cnt,0) as 'order_cnt',IFNULL(e.first_cnt,0) as 'first_cnt',IFNULL(e.second_cnt,0) as 'second_cnt',IFNULL(e.old_cnt,0) as 'old_cnt' FROM
 			(
-			SELECT DATE(u.create_time) AS 'create_time',u.merchant,COUNT(u.id) AS 'register_cnt' FROM tb_user u WHERE u.create_time >= DATE_SUB(@indate,INTERVAL @day_cnt DAY) AND u.create_time &lt; DATE_ADD(@indate,INTERVAL 1 DAY) GROUP BY 1,2
+			SELECT DATE(u.create_time) AS 'create_time',u.merchant,COUNT(u.id) AS 'register_cnt' FROM tb_user u WHERE u.create_time >= DATE_SUB(#{date},INTERVAL 1 DAY) AND u.create_time &lt; DATE_ADD(#{date},INTERVAL 1 DAY) GROUP BY 1,2
 			) a
-			LEFT JOIN 
+			LEFT JOIN
 			(
-			SELECT DATE(ui.real_name_time) AS 'create_time',u.merchant,COUNT(ui.uid) AS 'realname_cnt' FROM tb_user_ident ui LEFT JOIN tb_user u ON u.id = ui.uid WHERE ui.real_name_time >= DATE_SUB(@indate,INTERVAL @day_cnt DAY) AND ui.real_name_time &lt; DATE_ADD(@indate,INTERVAL 1 DAY) GROUP BY 1,2
+			SELECT DATE(ui.real_name_time) AS 'create_time',u.merchant,COUNT(ui.uid) AS 'realname_cnt' FROM tb_user_ident ui LEFT JOIN tb_user u ON u.id = ui.uid WHERE ui.real_name_time >= DATE_SUB(#{date},INTERVAL 1 DAY) AND ui.real_name_time &lt; DATE_ADD(#{date},INTERVAL 1 DAY) GROUP BY 1,2
 			) b ON a.merchant = b.merchant
 			LEFT JOIN 
 			(
-			SELECT DATE(mz.create_time) AS 'create_time',u.merchant,COUNT(mz.id) AS 'zfb_cnt' FROM tb_moxie_zfb mz LEFT JOIN tb_user u ON u.id = mz.uid WHERE mz.create_time >= DATE_SUB(@indate,INTERVAL @day_cnt DAY) AND mz.create_time &lt; DATE_ADD(@indate,INTERVAL 1 DAY) GROUP BY 1,2
+			SELECT DATE(mz.create_time) AS 'create_time',u.merchant,COUNT(mz.id) AS 'zfb_cnt' FROM tb_moxie_zfb mz LEFT JOIN tb_user u ON u.id = mz.uid WHERE mz.create_time >= DATE_SUB(#{date},INTERVAL 1 DAY) AND mz.create_time &lt; DATE_ADD(#{date},INTERVAL 1 DAY) GROUP BY 1,2
 			) c ON a.merchant = c.merchant
 			LEFT JOIN 
 			(
-			SELECT DATE(mm.create_time) AS 'create_time',u.merchant,COUNT(mm.id) AS 'mobile_cnt' FROM tb_moxie_mobile mm LEFT JOIN tb_user u ON u.id = mm.uid WHERE mm.create_time >= DATE_SUB(@indate,INTERVAL @day_cnt DAY) AND mm.create_time &lt; DATE_ADD(@indate,INTERVAL 1 DAY) GROUP BY 1,2
+			SELECT DATE(mm.create_time) AS 'create_time',u.merchant,COUNT(mm.id) AS 'mobile_cnt' FROM tb_moxie_mobile mm LEFT JOIN tb_user u ON u.id = mm.uid WHERE mm.create_time >= DATE_SUB(#{date},INTERVAL 1 DAY) AND mm.create_time &lt; DATE_ADD(#{date},INTERVAL 1 DAY) GROUP BY 1,2
 			) d ON a.merchant = d.merchant
 			LEFT JOIN
 			(
@@ -44,7 +42,7 @@
 			COUNT(CASE WHEN o.user_type = 2 THEN o.id END) AS 'second_cnt',
 			COUNT(CASE WHEN o.user_type = 3 THEN o.id END) AS 'old_cnt'
 			FROM tb_order o LEFT JOIN tb_user u ON u.id = o.uid
-			WHERE o.create_time >= DATE_SUB(@indate,INTERVAL @day_cnt DAY) AND o.create_time &lt; DATE_ADD(@indate,INTERVAL 1 DAY)
+			WHERE o.create_time >= DATE_SUB(#{date},INTERVAL 1 DAY) AND o.create_time &lt; DATE_ADD(#{date},INTERVAL 1 DAY)
 			GROUP BY 1,2
 			) e ON a.merchant = e.merchant
 			where a.create_time = b.create_time and a.create_time = c.create_time and a.create_time = d.create_time and a.create_time = e.create_time

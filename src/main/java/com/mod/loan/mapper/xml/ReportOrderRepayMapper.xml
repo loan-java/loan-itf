@@ -27,8 +27,6 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <insert id="reportOrderRepay"  >
- 	set @indate=#{date};
-	set @day_cnt=#{day};
 	insert into  report_order_repay(day_key,merchant,should_repay_cnt,early_repay_cnt,normal_repay_cnt,overdue_repay_cnt,overdue_cnt,bad_cnt
 	,overdue1_repay_cnt,overdue3_repay_cnt,overdue7_repay_cnt,overdue15_repay_cnt,repay_amount,real_repay_amount,pay_amount,overdue_fee,reduce_money,overdue_repay_amount)
 	(SELECT 
@@ -51,7 +49,7 @@
 	,sum(reduce_money) as reduce_money
 	,sum(case when od.status in (33,34) then od.should_repay else 0 end) as overdue_repay_amount
 	from  tb_order od 
-	where od.status>30 and od.status &lt;50 and od.repay_time>=DATE_SUB( @indate,INTERVAL @day_cnt day) and od.repay_time &lt;DATE_add( @indate,INTERVAL 1 day)
+	where od.status>30 and od.status &lt;50 and od.repay_time>=DATE_SUB( #{date},INTERVAL #{day} day) and od.repay_time &lt;DATE_add( #{date},INTERVAL 1 day)
 	GROUP BY 1,2) on DUPLICATE key update 
 	should_repay_cnt=VALUES(should_repay_cnt)
 	,early_repay_cnt=VALUES(early_repay_cnt)

@@ -20,8 +20,6 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <insert id="reportOrderLoan">
-  	set @indate=#{date};
-  	set @day_cnt=1;
 	insert into  report_order_loan(day_key,merchant,arrive_cnt,arrive_amount,first_cnt,second_cnt,old_cnt,first_amount,second_amount,old_amount,total_fee)
 	(SELECT 
 	date(t1.arrive_time) as day_key,
@@ -38,8 +36,8 @@
 	sum(t1.total_fee) as total_fee
 	FROM tb_order t1 
 	where 1=1
-	and t1.arrive_time>=DATE_SUB( @indate,INTERVAL @day_cnt day) 
-	and t1.arrive_time &lt; DATE_add( @indate,INTERVAL 1 day)
+	and t1.arrive_time>=DATE_SUB( #{date},INTERVAL 1 day)
+	and t1.arrive_time &lt; DATE_add( #{date},INTERVAL 1 day)
 	GROUP BY 1,2) on DUPLICATE key update 
 	arrive_cnt=VALUES(arrive_cnt)
 	,arrive_amount=VALUES(arrive_amount)
