@@ -89,6 +89,17 @@ public class User {
 
     @Column(name = "merchant")
     private String merchant;
+
+    private String commonInfo;
+
+    public String getCommonInfo() {
+        return commonInfo;
+    }
+
+    public void setCommonInfo(String commonInfo) {
+        this.commonInfo = commonInfo;
+    }
+
     /**
      * @return id
      */

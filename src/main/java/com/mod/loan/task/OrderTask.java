@@ -1,5 +1,7 @@
 package com.mod.loan.task;
 
+import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +10,16 @@ import org.springframework.stereotype.Component;
 
 import com.mod.loan.service.OrderService;
 
+import java.util.List;
+
 @Component
 public class OrderTask {
 
     public static final Logger logger = LoggerFactory.getLogger(OrderTask.class);
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 凌晨零点2分执行
@@ -24,6 +30,30 @@ public class OrderTask {
             orderService.updateOverdueInfo();
         } catch (Exception e) {
             logger.error("更新订单逾期状态及费用计算定时异常", e);
+        }
+    }
+
+    @Scheduled(cron = "0 3 0 * * ?")
+    public void callBackOverdueOrders() {
+        try {
+            List<Order> orderList = orderService.findOverdueOrders();
+            orderList.forEach(item-> {
+                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
+            });
+        } catch (Exception e) {
+            logger.error("回调逾期订单异常", e);
+        }
+    }
+
+    @Scheduled(cron = "0 3 0 * * ?")
+    public void callBackBadOrders() {
+        try {
+            List<Order> orderList = orderService.findBadOrders();
+            orderList.forEach(item-> {
+                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
+            });
+        } catch (Exception e) {
+            logger.error("回调坏账订单异常", e);
         }
     }
 

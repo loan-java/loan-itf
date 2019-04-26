@@ -3,6 +3,14 @@ package com.mod.loan.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
+import com.mod.loan.common.enums.OrderStatusEnum;
+import com.mod.loan.common.enums.OrderTypeEnum;
+import com.mod.loan.common.enums.PayStatusEnum;
+import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.User;
+import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -69,5 +77,36 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 	public int updateToBadDebt() {
 		return orderMapper.updateToBadDebt();
 	}
-	
+
+	public void orderCallBack(User user, String orderNo, Integer orderStatus) {
+
+		JSONObject object = JSONObject.parseObject(user.getCommonInfo());
+		object.put("orderNo", orderNo);
+		object.put("orderType", OrderTypeEnum.JK.getCode());
+		switch (orderStatus) {
+			case 33:
+				object.put("orderStatus", OrderStatusEnum.OVERDUE.getCode());
+				object.put("payStatus", PayStatusEnum.PAYED.getCode());
+				object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+			case 34:
+				object.put("orderStatus", OrderStatusEnum.BAD_DEBT.getCode());
+				object.put("payStatus", PayStatusEnum.PAYED.getCode());
+				object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+			default:
+				break;
+		}
+
+		CallBackJuHeUtil.callBack("", object);
+	}
+
+	@Override
+	public List<Order> findOverdueOrders() {
+		return orderMapper.findOverdueOrders();
+	}
+
+	@Override
+	public List<Order> findBadOrders() {
+		return orderMapper.findBadOrders();
+	}
+
 }

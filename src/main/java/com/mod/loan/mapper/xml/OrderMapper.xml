@@ -46,7 +46,7 @@
 		update tb_order set status = 34 where status=33 and DATEDIFF(NOW(),repay_time) >= 30
 	</update>
 
-	<select id="findByStatusAndOverdays"  resultType="HashMap">
+	<select id="findByStatusAndOverdays"  resultType="map">
 	SELECT o.merchant as merchant, m.merchant_app as merchantApp , u.user_phone as userPhone,o.id as orderId ,o.uid as uid,u.user_name as userName FROM tb_order o,tb_user u ,tb_merchant m
 	where o.uid=u.id and o.status = #{status} and datediff(now(),o.repay_time) ${op} #{days} and o.merchant=m.merchant_alias
 	</select>
@@ -58,5 +58,13 @@
 	<update id="updateOrderVersion"   >
 		update tb_order set order_version=order_version+1 where id=#{orderId}
 	</update>
+
+	<select id="findOverdueOrders" resultMap="BaseResultMap">
+		select * from tb_order where merchant="zhenhaohua" and status = 33 and DATEDIFF(NOW(),repay_time) >= 1
+	</select>
+
+	<select id="findBadOrders" resultMap="BaseResultMap">
+		select * from tb_order where merchant="zhenhaohua" and status = 34 and DATEDIFF(NOW(),repay_time) >= 1
+	</select>
 
 </mapper>

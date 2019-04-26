@@ -57,4 +57,16 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	 */
 	int updateOrderVersion(Long orderId);
 
+	/**
+	 * 找当天逾期的订单
+	 * @return
+	 */
+	List<Order> findOverdueOrders();
+
+	/**
+	 * 找当天坏账的订单
+	 * @return
+	 */
+	List<Order> findBadOrders();
+
 }
