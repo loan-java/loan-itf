@@ -3,7 +3,9 @@ package com.mod.loan.task.sms;
 import com.mod.loan.common.enums.SmsTemplate;
 import com.mod.loan.common.message.QueueSmsMessage;
 import com.mod.loan.config.rabbitmq.RabbitConst;
+import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderService;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -31,10 +33,12 @@ public class MessageTask {
         try {
             List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", -1);
             for (Map<String, Object> order : orderList) {
+                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
                 QueueSmsMessage smsMessage = new QueueSmsMessage();
                 smsMessage.setClientAlias(order.get("merchant").toString());
                 smsMessage.setType(SmsTemplate.T2003.getKey());
                 smsMessage.setPhone(order.get("userPhone").toString());
+                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
                 rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
             }
 
@@ -44,16 +48,36 @@ public class MessageTask {
     }
 
     /**
-     * 应还时间当天提醒 中午11点30提醒
+     * 应还时间当天提醒 10点和18点提醒
      */
     @Scheduled(cron = "0 0 10,18 * * ?")
     public void overdueToday() {
         List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", 0);
         for (Map<String, Object> order : orderList) {
+            Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
             QueueSmsMessage smsMessage = new QueueSmsMessage();
             smsMessage.setClientAlias(order.get("merchant").toString());
             smsMessage.setType(SmsTemplate.T2002.getKey());
             smsMessage.setPhone(order.get("userPhone").toString());
+            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日到期，请及时还款！");
+            rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+        }
+    }
+
+
+    /**
+     * 逾期提醒 每天10点和18点提醒
+     */
+    @Scheduled(cron = "0 0 10,18 * * ?")
+    public void overdue() {
+        List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(33, ">", 0);
+        for (Map<String, Object> order : orderList) {
+            Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+            QueueSmsMessage smsMessage = new QueueSmsMessage();
+            smsMessage.setClientAlias(order.get("merchant").toString());
+            smsMessage.setType(SmsTemplate.T2005.getKey());
+            smsMessage.setPhone(order.get("userPhone").toString());
+            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
             rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
         }
     }
