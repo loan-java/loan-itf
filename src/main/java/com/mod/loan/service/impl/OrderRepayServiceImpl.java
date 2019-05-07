@@ -1,19 +1,15 @@
 package com.mod.loan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.mapper.BaseServiceImpl;
 import com.mod.loan.common.message.OrderRepayQueryMessage;
 import com.mod.loan.config.Constant;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.OrderRepayMapper;
-import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderRepay;
-import com.mod.loan.model.User;
-import com.mod.loan.model.UserBank;
-import com.mod.loan.service.OrderRepayService;
-import com.mod.loan.service.UserBankService;
-import com.mod.loan.service.UserService;
+import com.mod.loan.model.*;
+import com.mod.loan.service.*;
 import com.mod.loan.util.StringUtil;
 import com.mod.loan.util.TimeUtils;
 import com.mod.loan.util.baofoo.rsa.RsaCodingUtil;
@@ -53,6 +49,12 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     @Autowired
     private UserBankService userBankService;
 
+    @Autowired
+    private MerchantService merchantService;
+
+    @Autowired
+    private KuaiQianService kuaiQianService;
+
     @Override
     public void updateOrderRepayInfo(OrderRepay orderRepay, Order order) {
         orderRepayMapper.updateByPrimaryKeySelective(orderRepay);
@@ -66,6 +68,23 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
 
     @Override
     public void repay(Order order) {
+        long uid = order.getUid();
+        User user = userService.selectByPrimaryKey(uid);
+        Merchant merchant = merchantService.selectByPrimaryKey(user.getMerchant());
+
+        switch (merchant.getBindType()) {
+            case 4:
+                baofooRepay(order, uid, user);
+                break;
+            case 5:
+                kuaiQianService.repay(order, uid, user);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void baofooRepay(Order order, long uid, User user) {
         //报文发送日期时间
         String sendTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //商户私钥
@@ -73,9 +92,7 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
         //宝付公钥
         String cerpath = Constant.baoFooPubKeyPath;
 
-        long uid = order.getUid();
         UserBank userBank = userBankService.selectUserCurrentBankCard(uid);
-        User user = userService.selectByPrimaryKey(uid);
 
         // 支付流水号
         String orderSeriesId = StringUtil.getOrderNumber("bf");
