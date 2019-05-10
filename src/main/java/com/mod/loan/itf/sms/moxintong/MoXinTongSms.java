@@ -3,6 +3,7 @@ package com.mod.loan.itf.sms.moxintong;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.message.QueueSmsMessage;
+import com.mod.loan.config.Constant;
 import com.mod.loan.util.HttpUtils;
 import com.mod.loan.util.MD5;
 import com.mod.loan.util.TimeUtils;
@@ -47,7 +48,7 @@ public class MoXinTongSms {
     }
 
     public static void main(String[] args) {
-        QueueSmsMessage smsMessage = new QueueSmsMessage("jishidai", "2003", "18329032015", "嘻嘻1111111");
+        QueueSmsMessage smsMessage = new QueueSmsMessage(Constant.ENVIROMENT, "2003", "18329032015", "嘻嘻1111111");
         try {
             System.out.println(MoXinTongSms.send(smsMessage));
         } catch (Exception e) {
