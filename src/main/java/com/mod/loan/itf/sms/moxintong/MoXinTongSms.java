@@ -34,6 +34,7 @@ public class MoXinTongSms {
         data.put("pwd", MD5.toMD5(sign.getAccesskey() + sign.getSecret() + ts));
         data.put("mobile", smsMessage.getPhone());
         if (null != smsMessage.getParams()) {
+            //短信标题
             data.put("content", smsMessage.getParams());
         }
         data.put("ts", ts);

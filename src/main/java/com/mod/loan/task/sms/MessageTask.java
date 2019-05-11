@@ -2,7 +2,6 @@ package com.mod.loan.task.sms;
 
 import com.mod.loan.common.enums.SmsTemplate;
 import com.mod.loan.common.message.QueueSmsMessage;
-import com.mod.loan.config.Constant;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderService;
@@ -39,7 +38,7 @@ public class MessageTask {
                 smsMessage.setClientAlias(order.get("merchant").toString());
                 smsMessage.setType(SmsTemplate.T2003.getKey());
                 smsMessage.setPhone(order.get("userPhone").toString());
-                smsMessage.setParams(Constant.smsTitle + "你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
+                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
                 rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
             }
 
@@ -60,7 +59,7 @@ public class MessageTask {
             smsMessage.setClientAlias(order.get("merchant").toString());
             smsMessage.setType(SmsTemplate.T2002.getKey());
             smsMessage.setPhone(order.get("userPhone").toString());
-            smsMessage.setParams(Constant.smsTitle + "你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日到期，请及时还款！");
+            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日到期，请及时还款！");
             rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
         }
     }
@@ -78,7 +77,7 @@ public class MessageTask {
             smsMessage.setClientAlias(order.get("merchant").toString());
             smsMessage.setType(SmsTemplate.T2005.getKey());
             smsMessage.setPhone(order.get("userPhone").toString());
-            smsMessage.setParams(Constant.smsTitle + "你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
+            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
             rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
         }
     }

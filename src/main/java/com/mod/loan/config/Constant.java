@@ -27,14 +27,6 @@ public class Constant {
     public static String kuaiQianJksPath;
     public static String kuaiQianKeyPassword;
 
-
-    public static String smsTitle;
-
-    @Value("${sms.title}")
-    public  void setSmsTitle(String smsTitle) {
-        Constant.smsTitle = smsTitle;
-    }
-
     @Value("${kuaiqian.jks.path}")
     public  void setKuaiQianJksPath(String kuaiQianJksPath) {
         Constant.kuaiQianJksPath = kuaiQianJksPath;
