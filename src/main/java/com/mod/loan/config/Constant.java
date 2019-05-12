@@ -1,7 +1,10 @@
 package com.mod.loan.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URLDecoder;
 
 /**
  * @author kk
@@ -32,7 +35,14 @@ public class Constant {
 
 
     @Value("${sms.type}")
-    public static void setSmsType(String smsType) {
+    public void setSmsType(String smsType) {
+        if(StringUtils.startsWith(smsType, "%")){
+            try {
+                smsType = URLDecoder.decode(smsType, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         Constant.smsType = smsType;
     }
 
