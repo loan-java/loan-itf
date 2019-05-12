@@ -35,7 +35,7 @@ public class MoXinTongSms {
         data.put("mobile", smsMessage.getPhone());
         if (null != smsMessage.getParams()) {
             //短信标题
-            data.put("content", smsMessage.getParams());
+            data.put("content", Constant.smsType + smsMessage.getParams());
         }
         data.put("ts", ts);
         String body = HttpUtils.doPost(url, data);

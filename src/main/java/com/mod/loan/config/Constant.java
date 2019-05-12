@@ -27,13 +27,22 @@ public class Constant {
     public static String kuaiQianJksPath;
     public static String kuaiQianKeyPassword;
 
+
+    public static String smsType;
+
+
+    @Value("${sms.type}")
+    public static void setSmsType(String smsType) {
+        Constant.smsType = smsType;
+    }
+
     @Value("${kuaiqian.jks.path}")
-    public  void setKuaiQianJksPath(String kuaiQianJksPath) {
+    public void setKuaiQianJksPath(String kuaiQianJksPath) {
         Constant.kuaiQianJksPath = kuaiQianJksPath;
     }
 
     @Value("${kuaiqian.key.password}")
-    public  void setKuaiQianKeyPassword(String kuaiQianKeyPassword) {
+    public void setKuaiQianKeyPassword(String kuaiQianKeyPassword) {
         Constant.kuaiQianKeyPassword = kuaiQianKeyPassword;
     }
 
@@ -96,4 +105,6 @@ public class Constant {
     public void setBaoFooVersion(String baoFooVersion) {
         Constant.baoFooVersion = baoFooVersion;
     }
+
+
 }
