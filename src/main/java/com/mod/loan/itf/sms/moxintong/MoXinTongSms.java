@@ -10,6 +10,8 @@ import com.mod.loan.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,9 +51,10 @@ public class MoXinTongSms {
     }
 
     public static void main(String[] args) {
-        QueueSmsMessage smsMessage = new QueueSmsMessage(Constant.ENVIROMENT, "2003", "18329032015", "嘻嘻1111111");
         try {
-            System.out.println(MoXinTongSms.send(smsMessage));
+            System.out.println(URLDecoder.decode("【华时贷】", "UTF-8"));
+            System.out.println(URLEncoder.encode("【华时贷】", "UTF-8"));
+            System.out.println(URLEncoder.encode("【华时代】", "UTF-8"));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
