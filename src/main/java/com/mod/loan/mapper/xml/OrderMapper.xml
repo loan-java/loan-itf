@@ -46,7 +46,7 @@
 	<update id="updateInterestFee">
 		update tb_order
 		set interest_fee = borrow_money*interest_rate/1000*DATEDIFF(DATE_ADD(NOW(),INTERVAL 1 day),create_time),
-		should_repay = borrow_money+interest_fee-reduce_money-had_repay
+		should_repay = borrow_money+interest_fee-reduce_money-had_repay+overdue_fee
 		where status > 30 and status &lt; 40 and DATEDIFF(now(),create_time)>0
 	</update>
 
