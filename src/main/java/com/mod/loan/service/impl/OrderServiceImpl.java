@@ -8,9 +8,10 @@ import com.mod.loan.common.enums.OrderStatusEnum;
 import com.mod.loan.common.enums.OrderTypeEnum;
 import com.mod.loan.common.enums.PayStatusEnum;
 import com.mod.loan.common.enums.RepayStatusEnum;
-import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.User;
+import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,6 +27,8 @@ import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderPay;
 import com.mod.loan.service.OrderService;
 
+import javax.annotation.Resource;
+
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
 
@@ -36,6 +39,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     private OrderPayMapper orderPayMapper;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Resource
+    private CallBackRongZeService callBackRongZeService;
 
     @Override
     public void updatePayInfo(Order order, OrderPay orderPay) {
@@ -53,10 +58,19 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     @Override
     public void updateOverdueInfo() {
+
         int numOne = orderMapper.updateToOverdue();
         logger.info("今日逾期订单数为：{}", numOne);
         int numTwo = orderMapper.updateOverdueFee();
         logger.info("逾期费用更新完毕，影响行数为：{}", numTwo);
+
+        //逾期推送融泽订单状态
+        List<Order> list = orderMapper.selectOverdueOrderRZ();
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(order -> {
+                callBackRongZeService.pushOrderStatus(order);
+            });
+        }
     }
 
     @Override

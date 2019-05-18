@@ -10,6 +10,12 @@ import com.mod.loan.model.Order;
 
 public interface OrderMapper extends MyBaseMapper<Order> {
 
+	/**
+	 * 查询融泽逾期的订单
+	 * @return
+	 */
+	List<Order> selectOverdueOrderRZ();
+
     /**
      * 更新为逾期状态
      *

@@ -29,7 +29,12 @@
 		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
 		<result column="follow_user_id" jdbcType="BIGINT" property="followUserId" />
 		<result column="payment_type" jdbcType="VARCHAR" property="paymentType"/>
+		<result column="source" jdbcType="INTEGER" property="source"/>
 	</resultMap>
+
+	<select id="selectOverdueOrderRZ" resultMap="BaseResultMap">
+		select * from tb_order where status=33 and source=1
+	</select>
 
 	<update id="updateToOverdue" >
     	update tb_order set status = 33 where status=31 and DATEDIFF(NOW(),repay_time) >= 1
