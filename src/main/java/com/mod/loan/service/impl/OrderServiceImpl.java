@@ -1,15 +1,20 @@
 package com.mod.loan.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.OrderStatusEnum;
 import com.mod.loan.common.enums.OrderTypeEnum;
 import com.mod.loan.common.enums.PayStatusEnum;
 import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.common.mapper.BaseServiceImpl;
+import com.mod.loan.common.message.RiskAuditMessage;
+import com.mod.loan.config.rabbitmq.RabbitConst;
+import com.mod.loan.mapper.OrderMapper;
+import com.mod.loan.mapper.OrderPayMapper;
+import com.mod.loan.model.Order;
+import com.mod.loan.model.OrderPay;
 import com.mod.loan.model.User;
 import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.OrderService;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -18,16 +23,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mod.loan.common.mapper.BaseServiceImpl;
-import com.mod.loan.common.message.RiskAuditMessage;
-import com.mod.loan.config.rabbitmq.RabbitConst;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.mapper.OrderPayMapper;
-import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderPay;
-import com.mod.loan.service.OrderService;
-
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
@@ -68,7 +66,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         List<Order> list = orderMapper.selectOverdueOrderRZ();
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(order -> {
-                callBackRongZeService.pushOrderStatus(order);
+                if (order.getSource() == 1) {
+                    callBackRongZeService.pushOrderStatus(order);
+                }
             });
         }
     }

@@ -6,7 +6,6 @@ import com.mod.loan.config.Constant;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.rongze.BizDataUtil;
 import com.mod.loan.util.rongze.RongZeRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +29,6 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             order = checkOrder(order);
             if (order == null) return;
 
-            unbindOrderNo(order);
             postOrderStatus(order);
         } catch (Exception e) {
             log.error("给融泽推送订单状态失败: " + e.getMessage(), e);
@@ -77,11 +75,4 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
         RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 
-    private void unbindOrderNo(Order o) {
-        o.setOrderNo(unbindOrderNo(o.getOrderNo()));
-    }
-
-    private String unbindOrderNo(String orderNo) {
-        return BizDataUtil.unbindRZOrderNo(orderNo);
-    }
 }
