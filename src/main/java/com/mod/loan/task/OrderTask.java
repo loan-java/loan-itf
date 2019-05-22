@@ -22,9 +22,9 @@ public class OrderTask {
     private UserMapper userMapper;
 
     /**
-     * 凌晨零点2分执行
+     * 凌晨零点5分执行
      */
-    @Scheduled(cron = "1 15 0 * * ?")
+    @Scheduled(cron = "0 5 0 * * ?")
     public void updateOverdueInfoTask() {
         try {
             orderService.updateOverdueInfo();
@@ -33,7 +33,7 @@ public class OrderTask {
         }
     }
 
-    @Scheduled(cron = "1 10 0 * * ?")
+    @Scheduled(cron = "0 1 0 * * ?")
     public void updateInterestFee() {
         try {
             orderService.updateInterestFee();
