@@ -10,30 +10,23 @@ import com.mod.loan.model.User;
 
 public interface OrderService extends BaseService<Order, Long> {
 
-	void updatePayInfo(Order order, OrderPay orderPay);
+    void updateOverdueInfo();
 
-	void updatePayCallbackInfo(Order order, OrderPay orderPay);
+    void updateInterestFee();
 
-	void updateOverdueInfo();
+    List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days);
 
-	void updateInterestFee();
+    /**
+     * 向风控发送重新 等待时间过长的待机审核订单
+     *
+     * @param minute
+     */
+    void modifyOrderAuditAgain(int minute);
 
-	List<Map<String, Object>> findByStatusAndOverdays(Integer status, String op, Integer days);
-
-	/**
-	 * 向风控发送重新 等待时间过长的待机审核订单
-	 * 
-	 * @param minute
-	 */
-	void modifyOrderAuditAgain(int minute);
-
-	int updateToBadDebt();
+    int updateToBadDebt();
 
     List<Order> findByRepayTime(String repayTime);
-	void orderCallBack(User user, String orderNo, Integer orderStatus);
 
-	List<Order> findOverdueOrders();
-
-	List<Order> findBadOrders();
+    void orderCallBack(User user, Order order);
 
 }

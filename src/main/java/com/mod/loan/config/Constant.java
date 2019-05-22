@@ -33,6 +33,9 @@ public class Constant {
 
     public static String smsType;
 
+    public static String juheCallBackUrl;
+
+
     public static String rongZeRequestAppId;
     public static String rongZeCallbackUrl;
     public static String rongZeQueryUrl;
@@ -147,5 +150,9 @@ public class Constant {
         Constant.baoFooVersion = baoFooVersion;
     }
 
+    @Value("${juhe.call.back.url}")
+    public void setJuheCallBackUrl(String juheCallBackUrl) {
+        Constant.juheCallBackUrl = juheCallBackUrl;
+    }
 
 }

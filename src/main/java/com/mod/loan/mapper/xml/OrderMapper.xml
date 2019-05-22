@@ -89,4 +89,8 @@
 		select * from tb_order where merchant="zhenhaohua" and status = 34 and DATEDIFF(NOW(),repay_time) >= 1
 	</select>
 
+	<select id="selectOrderList" resultMap="BaseResultMap">
+		select * from tb_order where status > 30 and status &lt;40
+	</select>
+
 </mapper>

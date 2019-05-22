@@ -49,32 +49,4 @@ public class ReportController {
 		return new ResultMessage(ResponseEnum.M2000);
 	}
 
-	/**
-	 * 渠道统计数据，默认计算当天数据
-	 */
-	@RequestMapping(value = "report_partner_effect")
-	public ResultMessage report_partner_effect(String date, @RequestParam(defaultValue = "3") Integer day, String merchant) {
-		if (StringUtils.isBlank(merchant)) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "请输入商户别名。");
-		}
-		if (StringUtils.isBlank(date)) {
-			date = new DateTime().toString(TimeUtils.dateformat2);
-		}
-		logger.info("开始渠道统计数据,日期={},day={},商户={}", date, day, merchant);
-		reportService.reportPartnerEffect(date, day, merchant);
-		return new ResultMessage(ResponseEnum.M2000);
-	}
-
-	/**
-	 * 注册提单统计数据，默认计算当天数据
-	 */
-	@RequestMapping(value = "report_register_order")
-	public ResultMessage report_register_order(String date) {
-		if (StringUtils.isBlank(date)) {
-			date = new DateTime().toString(TimeUtils.dateformat2);
-		}
-		reportService.reportRegisterOrder(date);
-		return new ResultMessage(ResponseEnum.M2000);
-	}
-	
 }

@@ -88,4 +88,6 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	 */
 	List<Order> findBadOrders();
 
+	List<Order> selectOrderList();
+
 }

@@ -47,29 +47,4 @@ public class ReportTask {
 			logger.error("还款统计异常", e);
 		}
 	}
-
-	@Scheduled(cron = "0 5 0/3 * * ?")
-	public void report_partner_effect() {
-		List<Merchant> merchants = merchantService.selectMerchantAliasByStatus(1);
-		for (Merchant merchant : merchants) {
-			try {
-				Response execute = Jsoup.connect(server_itf_url + "report/report_partner_effect?merchant=" + merchant.getMerchantAlias()).ignoreContentType(true).ignoreHttpErrors(true).timeout(5000).execute();
-				logger.info("渠道统计调用结果={}", execute.body());
-			} catch (Exception e) {
-				logger.error("渠道统计异常，商户={}", merchant.getMerchantAlias());
-				logger.error("渠道统计异常", e);
-			}
-		}
-	}
-
-	@Scheduled(cron = "0 0 0/3 * * ?")
-	public void report_register_order() {
-		try {
-			Response execute = Jsoup.connect(server_itf_url + "report/report_register_order?").ignoreContentType(true).ignoreHttpErrors(true).timeout(5000).execute();
-			logger.info("注册提单统计调用结果={}", execute.body());
-		} catch (Exception e) {
-			logger.error("注册提单统计异常", e);
-		}
-	}
-
 }

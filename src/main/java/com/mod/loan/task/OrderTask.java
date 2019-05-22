@@ -42,30 +42,6 @@ public class OrderTask {
         }
     }
 
-    @Scheduled(cron = "0 3 0 * * ?")
-    public void callBackOverdueOrders() {
-        try {
-            List<Order> orderList = orderService.findOverdueOrders();
-            orderList.forEach(item-> {
-                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
-            });
-        } catch (Exception e) {
-            logger.error("回调逾期订单异常", e);
-        }
-    }
-
-    @Scheduled(cron = "0 3 0 * * ?")
-    public void callBackBadOrders() {
-        try {
-            List<Order> orderList = orderService.findBadOrders();
-            orderList.forEach(item-> {
-                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
-            });
-        } catch (Exception e) {
-            logger.error("回调坏账订单异常", e);
-        }
-    }
-
     @Scheduled(cron = "0 0 15 * * ?")
     public void updateToBadDebtTask() {
         try {
