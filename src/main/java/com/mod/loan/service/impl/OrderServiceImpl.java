@@ -22,23 +22,12 @@ import com.mod.loan.common.mapper.BaseServiceImpl;
 import com.mod.loan.common.message.RiskAuditMessage;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.mapper.OrderPayMapper;
 import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderPay;
-import com.mod.loan.model.User;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
@@ -47,25 +36,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
-    private OrderPayMapper orderPayMapper;
-    @Autowired
     private RabbitTemplate rabbitTemplate;
     @Resource
     private CallBackRongZeService callBackRongZeService;
 
-    @Override
-    public void updatePayInfo(Order order, OrderPay orderPay) {
-        if (order != null) {
-            orderMapper.updateByPrimaryKeySelective(order);
-        }
-        orderPayMapper.insertSelective(orderPay);
-    }
-
-    @Override
-    public void updatePayCallbackInfo(Order order, OrderPay orderPay) {
-        orderMapper.updateByPrimaryKeySelective(order);
-        orderPayMapper.updateByPrimaryKeySelective(orderPay);
-    }
     @Autowired
     private UserMapper userMapper;
 
@@ -86,6 +60,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 }
             });
         }
+        //推送流量端
         Order order = new Order();
         order.setStatus(33);
         List<Order> orderList = orderMapper.select(order);
