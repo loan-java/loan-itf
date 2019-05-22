@@ -24,7 +24,7 @@ public class OrderTask {
     /**
      * 凌晨零点2分执行
      */
-    @Scheduled(cron = "0 2 0 * * ?")
+    @Scheduled(cron = "0 5 0 * * ?")
     public void updateOverdueInfoTask() {
         try {
             orderService.updateOverdueInfo();
