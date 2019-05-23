@@ -129,7 +129,9 @@ public class KuaiQianServiceImpl implements KuaiQianService {
             return;
         } else {
             //如果TR2获取的应答码responseCode的值为00时，成功
-            if ("00".equals(respXml.get("responseCode"))) {
+            if ("00".equals(respXml.get("responseCode"))
+                    || "C0".equals(respXml.get("responseCode"))
+                    || "68".equals(respXml.get("responseCode"))) {
                 /* 进行数据库的逻辑操作，比如更新数据库或插入记录。 */
                 logger.info("快钱协议支付接口, 调用成功, 交易成功, orderNo={}, repayNo={}", order.getOrderNo(), externalRefNumber);
                 OrderRepay orderRepay = new OrderRepay();
