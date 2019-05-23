@@ -44,6 +44,9 @@ public class OrderTask {
         }
     }
 
+    /**
+     * 每天15点执行
+     */
     @Scheduled(cron = "0 0 15 * * ?")
     public void updateToBadDebtTask() {
         try {
