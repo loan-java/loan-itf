@@ -22,9 +22,9 @@ public class OrderTask {
     private UserMapper userMapper;
 
     /**
-     * 凌晨零点2分执行
+     * 凌晨1点5分执行
      */
-    @Scheduled(cron = "0 2 0 * * ?")
+    @Scheduled(cron = "0 05 1 * * ?")
     public void updateOverdueInfoTask() {
         try {
             orderService.updateOverdueInfo();
@@ -32,8 +32,10 @@ public class OrderTask {
             logger.error("更新订单逾期状态及费用计算定时异常", e);
         }
     }
-
-    @Scheduled(cron = "0 1 0 * * ?")
+    /**
+     * 凌晨1点10分执行
+     */
+    @Scheduled(cron = "0 10 1 * * ?")
     public void updateInterestFee() {
         try {
             orderService.updateInterestFee();
@@ -42,30 +44,9 @@ public class OrderTask {
         }
     }
 
-    @Scheduled(cron = "0 3 0 * * ?")
-    public void callBackOverdueOrders() {
-        try {
-            List<Order> orderList = orderService.findOverdueOrders();
-            orderList.forEach(item-> {
-                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
-            });
-        } catch (Exception e) {
-            logger.error("回调逾期订单异常", e);
-        }
-    }
-
-    @Scheduled(cron = "0 3 0 * * ?")
-    public void callBackBadOrders() {
-        try {
-            List<Order> orderList = orderService.findBadOrders();
-            orderList.forEach(item-> {
-                orderService.orderCallBack(userMapper.selectByPrimaryKey(item.getUid()),item.getOrderNo(),item.getStatus());
-            });
-        } catch (Exception e) {
-            logger.error("回调坏账订单异常", e);
-        }
-    }
-
+    /**
+     * 每天15点执行
+     */
     @Scheduled(cron = "0 0 15 * * ?")
     public void updateToBadDebtTask() {
         try {

@@ -44,6 +44,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 		<dependency>
@@ -142,6 +146,16 @@
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.8</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -156,10 +170,17 @@
 			</activation>
 		</profile>
 		<profile>
-			<!-- 生产环境 -->
-			<id>online</id>
+			<!-- 及时贷环境 -->
+			<id>jishidai</id>
 			<properties>
-				<profiles.active>online</profiles.active>
+				<profiles.active>jishidai</profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 华时贷环境 -->
+			<id>huashidai</id>
+			<properties>
+				<profiles.active>huashidai</profiles.active>
 			</properties>
 		</profile>
 	</profiles>
@@ -179,6 +200,22 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>com.mod.loan.Application</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+					<testFailureIgnore>true</testFailureIgnore>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*TestCase.java</include>
+						<include>**/Test*.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/Abstract*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

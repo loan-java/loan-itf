@@ -1,7 +1,10 @@
 package com.mod.loan.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URLDecoder;
 
 /**
  * @author kk
@@ -27,13 +30,63 @@ public class Constant {
     public static String kuaiQianJksPath;
     public static String kuaiQianKeyPassword;
 
+
+    public static String smsType;
+
+    public static String juheCallBackUrl;
+
+
+    public static String rongZeRequestAppId;
+    public static String rongZeCallbackUrl;
+    public static String rongZeQueryUrl;
+    public static String rongZePublicKey;
+
+    public static String orgPrivateKey;
+
+    @Value("${rongze.request.app.id}")
+    public void setRongZeRequestAppId(String rongZeRequestAppId) {
+        Constant.rongZeRequestAppId = rongZeRequestAppId;
+    }
+
+    @Value("${rongze.callback.url}")
+    public void setRongZeCallbackUrl(String rongZeCallbackUrl) {
+        Constant.rongZeCallbackUrl = rongZeCallbackUrl;
+    }
+
+    @Value("${rongze.query.url}")
+    public void setRongZeQueryUrl(String rongZeQueryUrl) {
+        Constant.rongZeQueryUrl = rongZeQueryUrl;
+    }
+
+    @Value("${org.rsa.private.key}")
+    public void setOrgPrivateKey(String orgPrivateKey) {
+        Constant.orgPrivateKey = orgPrivateKey;
+    }
+
+    @Value("${rongze.rsa.public.key}")
+    public void setRongZePublicKey(String rongZePublicKey) {
+        Constant.rongZePublicKey = rongZePublicKey;
+    }
+
+    @Value("${sms.type}")
+    public void setSmsType(String smsType) {
+        if(StringUtils.startsWith(smsType, "%")){
+            try {
+                smsType = URLDecoder.decode(smsType, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Constant.smsType = smsType;
+    }
+
     @Value("${kuaiqian.jks.path}")
-    public  void setKuaiQianJksPath(String kuaiQianJksPath) {
+    public void setKuaiQianJksPath(String kuaiQianJksPath) {
         Constant.kuaiQianJksPath = kuaiQianJksPath;
     }
 
     @Value("${kuaiqian.key.password}")
-    public  void setKuaiQianKeyPassword(String kuaiQianKeyPassword) {
+    public void setKuaiQianKeyPassword(String kuaiQianKeyPassword) {
         Constant.kuaiQianKeyPassword = kuaiQianKeyPassword;
     }
 
@@ -96,4 +149,10 @@ public class Constant {
     public void setBaoFooVersion(String baoFooVersion) {
         Constant.baoFooVersion = baoFooVersion;
     }
+
+    @Value("${juhe.call.back.url}")
+    public void setJuheCallBackUrl(String juheCallBackUrl) {
+        Constant.juheCallBackUrl = juheCallBackUrl;
+    }
+
 }

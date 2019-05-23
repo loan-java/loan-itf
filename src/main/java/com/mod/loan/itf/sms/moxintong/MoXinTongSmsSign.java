@@ -5,8 +5,10 @@ public enum MoXinTongSmsSign {
     /**
      * 账号配置
      */
-    MO_XIN_TONG("jishidai", "00", "真好花", "httz001", "4dae6489da13cc5285058c9124346ef0"),
-    ZHEN_HAO_HUA("zhenhaohua", "00", "真好花", "httz001", "4dae6489da13cc5285058c9124346ef0"),
+    //普通短信
+    T002("002", "00", "普通短信", "httz002", "4dae6489da13cc5285058c9124346ef0"),
+    //催收短信
+    T005("005", "00", "催收短信", "httz005", "4dae6489da13cc5285058c9124346ef0"),
     ;
 
     private String key;

@@ -28,7 +28,13 @@
 		<result column="order_version" jdbcType="INTEGER" property="orderVersion" />
 		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
 		<result column="follow_user_id" jdbcType="BIGINT" property="followUserId" />
+		<result column="payment_type" jdbcType="VARCHAR" property="paymentType"/>
+		<result column="source" jdbcType="INTEGER" property="source"/>
 	</resultMap>
+
+	<select id="selectOverdueOrderRZ" resultMap="BaseResultMap">
+		select * from tb_order where status=33 and source=1
+	</select>
 
 	<update id="updateToOverdue" >
     	update tb_order set status = 33 where status=31 and DATEDIFF(NOW(),repay_time) >= 1
@@ -44,9 +50,9 @@
 
 	<update id="updateInterestFee">
 		update tb_order
-	    set interest_fee = borrow_money*interest_rate/1000*DATEDIFF(NOW(),create_time) ,
-	    should_repay = borrow_money+borrow_money*overdue_rate/100*DATEDIFF(NOW(),repay_time)+interest_fee-reduce_money-had_repay
-	    where status > 30 and status &lt; 40 and DATEDIFF(NOW(),create_time)>0
+		set interest_fee = borrow_money*interest_rate/1000*DATEDIFF(DATE_ADD(NOW(),INTERVAL 1 day),create_time),
+		should_repay = borrow_money+interest_fee-reduce_money-had_repay+overdue_fee
+		where status > 30 and status &lt; 40 and DATEDIFF(now(),create_time)>0
 	</update>
 
 	<update id="updateToBadDebt" >
@@ -81,6 +87,10 @@
 
 	<select id="findBadOrders" resultMap="BaseResultMap">
 		select * from tb_order where merchant="zhenhaohua" and status = 34 and DATEDIFF(NOW(),repay_time) >= 1
+	</select>
+
+	<select id="selectOrderList" resultMap="BaseResultMap">
+		select * from tb_order where status > 30 and status &lt;40
 	</select>
 
 </mapper>
