@@ -5,8 +5,10 @@ public enum MoXinTongSmsSign {
     /**
      * 账号配置
      */
-    HUA_SHI_DAI("huashidai", "00", "华时贷", "httz005", "4dae6489da13cc5285058c9124346ef0"),
-    JI_SHI_DAI("jishidai", "00", "及时贷", "httz005", "4dae6489da13cc5285058c9124346ef0"),
+    //普通短信
+    T002("002", "00", "普通短信", "httz002", "4dae6489da13cc5285058c9124346ef0"),
+    //催收短信
+    T005("005", "00", "催收短信", "httz005", "4dae6489da13cc5285058c9124346ef0"),
     ;
 
     private String key;

@@ -26,9 +26,9 @@ public class MessageTask {
     RabbitTemplate rabbitTemplate;
 
     /**
-     * 提前一天还款短信提醒 下午17点
+     * 提前一天还款短信提醒 中午12点05分
      */
-    @Scheduled(cron = "0 0 17 * * ?")
+    @Scheduled(cron = "0 05 12 * * ?")
     public void overdueTomorrow() {
         try {
             List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", -1);
@@ -36,7 +36,7 @@ public class MessageTask {
                 Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
                 QueueSmsMessage smsMessage = new QueueSmsMessage();
                 smsMessage.setClientAlias(order.get("merchant").toString());
-                smsMessage.setType(SmsTemplate.T2003.getKey());
+                smsMessage.setType(SmsTemplate.T005.getKey());
                 smsMessage.setPhone(order.get("userPhone").toString());
                 smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
                 rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
@@ -48,37 +48,45 @@ public class MessageTask {
     }
 
     /**
-     * 应还时间当天提醒 10点和18点提醒
+     * 应还时间当天提醒 中午12点10分提醒
      */
-    @Scheduled(cron = "0 0 10,18 * * ?")
+    @Scheduled(cron = "0 10 12 * * ?")
     public void overdueToday() {
-        List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", 0);
-        for (Map<String, Object> order : orderList) {
-            Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
-            QueueSmsMessage smsMessage = new QueueSmsMessage();
-            smsMessage.setClientAlias(order.get("merchant").toString());
-            smsMessage.setType(SmsTemplate.T2002.getKey());
-            smsMessage.setPhone(order.get("userPhone").toString());
-            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日到期，请及时还款！");
-            rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+        try {
+            List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", 0);
+            for (Map<String, Object> order : orderList) {
+                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+                QueueSmsMessage smsMessage = new QueueSmsMessage();
+                smsMessage.setClientAlias(order.get("merchant").toString());
+                smsMessage.setType(SmsTemplate.T005.getKey());
+                smsMessage.setPhone(order.get("userPhone").toString());
+                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日为还款最后期限，请及时还款！");
+                rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+            }
+        } catch (Exception e) {
+            logger.error("今日逾期短信发送异常", e);
         }
     }
 
 
     /**
-     * 逾期提醒 每天10点和18点提醒
+     * 逾期提醒 每天中午12点15分
      */
-    @Scheduled(cron = "0 0 10,18 * * ?")
+    @Scheduled(cron = "0 15 12 * * ?")
     public void overdue() {
-        List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(33, ">", 0);
-        for (Map<String, Object> order : orderList) {
-            Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
-            QueueSmsMessage smsMessage = new QueueSmsMessage();
-            smsMessage.setClientAlias(order.get("merchant").toString());
-            smsMessage.setType(SmsTemplate.T2005.getKey());
-            smsMessage.setPhone(order.get("userPhone").toString());
-            smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
-            rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+        try {
+            List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(33, ">", 0);
+            for (Map<String, Object> order : orderList) {
+                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+                QueueSmsMessage smsMessage = new QueueSmsMessage();
+                smsMessage.setClientAlias(order.get("merchant").toString());
+                smsMessage.setType(SmsTemplate.T005.getKey());
+                smsMessage.setPhone(order.get("userPhone").toString());
+                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
+                rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+            }
+        } catch (Exception e) {
+            logger.error("逾期短信发送异常", e);
         }
     }
 

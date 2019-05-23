@@ -31,7 +31,7 @@ public class MoXinTongSms {
         String ts = TimeUtils.parseTime(new Date(), TimeUtils.dateformat5);
 
         Map<String, String> data = new HashMap<>(5);
-        MoXinTongSmsSign sign = MoXinTongSmsSign.getSign(smsMessage.getClientAlias());
+        MoXinTongSmsSign sign = MoXinTongSmsSign.getSign(smsMessage.getType());
         data.put("username", sign.getAccesskey());
         data.put("pwd", MD5.toMD5(sign.getAccesskey() + sign.getSecret() + ts));
         data.put("mobile", smsMessage.getPhone());
