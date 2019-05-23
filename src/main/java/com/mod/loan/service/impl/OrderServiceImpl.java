@@ -1,5 +1,6 @@
 package com.mod.loan.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +118,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
         object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
-        object.put("shouldRepayAmount",order.getShouldRepay());
+        object.put("shouldRepayAmount",new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
         object.put("accountId",order.getUid());
         switch (order.getStatus()) {
             case 21:
