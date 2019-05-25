@@ -14,9 +14,14 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Component
 public class SmsConsumer {
     private static final Logger log = LoggerFactory.getLogger(SmsConsumer.class);
+
+    @Resource
+    MoXinTongSms moXinTongSms;
 
     @RabbitListener(queues = "queue_sms", containerFactory = "sms_factory")
     @RabbitHandler
@@ -24,7 +29,7 @@ public class SmsConsumer {
         QueueSmsMessage smsMessage = JSONObject.parseObject(mess.getBody(), QueueSmsMessage.class);
 
         try {
-            MoXinTongSms.send(smsMessage);
+            moXinTongSms.send(smsMessage);
         } catch (Exception e) {
             log.error("短信发送异常,请求参数为{}", JSON.toJSONString(smsMessage));
             log.error("短信发送异常", e);
