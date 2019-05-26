@@ -49,15 +49,4 @@ public class MoXinTongSms {
             return false;
         }
     }
-
-    public static void main(String[] args) {
-        try {
-            System.out.println(URLDecoder.decode("【华时贷】", "UTF-8"));
-            System.out.println(URLEncoder.encode("【华时贷】", "UTF-8"));
-            System.out.println(URLEncoder.encode("【华时代】", "UTF-8"));
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 }
