@@ -31,7 +31,8 @@ public class RepayTask {
     /**
      * 自动扣款定时任务每天11点18点执行两次
      */
-    @Scheduled(cron = "0 0 11,18 * * ?")
+    //@Scheduled(cron = "0 0 11,18 * * ?")
+    @Scheduled(cron = "5 0/2 * * * ? ")
     public void updateOverdueInfoTask() {
         try {
             logger.info("=====自动扣款定时任务 开始=====");
