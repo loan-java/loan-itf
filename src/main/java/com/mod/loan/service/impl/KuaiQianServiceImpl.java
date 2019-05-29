@@ -1,13 +1,9 @@
 package com.mod.loan.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.message.OrderRepayQueryMessage;
-import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.config.Constant;
 import com.mod.loan.config.rabbitmq.RabbitConst;
-import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderRepay;
 import com.mod.loan.model.User;
@@ -71,7 +67,7 @@ public class KuaiQianServiceImpl implements KuaiQianService {
         //商户端交易时间
         String entryTime = TimeUtils.parseTime(new Date(), TimeUtils.dateformat5);
         //外部跟踪号
-        String externalRefNumber = StringUtil.getOrderNumber("rp");
+        String externalRefNumber = StringUtil.getOrderNumber("kq");
         //客户号
         String customerId = Constant.KUAI_QIAN_UID_PFX + uid;
         //tr3回调地址
