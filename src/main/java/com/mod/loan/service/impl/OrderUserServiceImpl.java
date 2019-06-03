@@ -37,7 +37,7 @@ public class OrderUserServiceImpl implements OrderUserService {
         log.info("风控订单数量={}", list.size());
         if (list.size() > 0) {
             list.stream().forEach(orderUser -> {
-                log.info("风控订单信息", JSONObject.toJSONString(orderUser));
+                log.info("风控订单信息={}", JSONObject.toJSONString(orderUser));
                 User user = userService.selectByPrimaryKey(orderUser.getUid());
                 RiskAuditMessage message = new RiskAuditMessage();
                 message.setOrderNo(orderUser.getOrderNo());
@@ -46,6 +46,7 @@ public class OrderUserServiceImpl implements OrderUserService {
                 message.setUid(orderUser.getUid());
                 message.setSource(orderUser.getSource());
                 message.setTimes(0);
+                log.info("风控订单消息={}", JSONObject.toJSONString(message));
                 try {
                     rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, message);
                 } catch (Exception e) {
