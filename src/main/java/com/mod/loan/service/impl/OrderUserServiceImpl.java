@@ -1,5 +1,6 @@
 package com.mod.loan.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.message.RiskAuditMessage;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.mapper.OrderUserMapper;
@@ -33,8 +34,10 @@ public class OrderUserServiceImpl implements OrderUserService {
     @Override
     public void getQjldQueryOrder() {
         List<OrderUser> list = orderUserMapper.getQjldQueryOrder(1);
+        log.info("风控订单数量={}", list.size());
         if (list.size() > 0) {
             list.stream().forEach(orderUser -> {
+                log.info("风控订单信息", JSONObject.toJSONString(orderUser));
                 User user = userService.selectByPrimaryKey(orderUser.getUid());
                 RiskAuditMessage message = new RiskAuditMessage();
                 message.setOrderNo(orderUser.getOrderNo());

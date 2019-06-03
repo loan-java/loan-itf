@@ -21,7 +21,7 @@ public class QjldOrderTask {
     /**
      * 每10分钟重新提取未进入风控的订单
      */
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void getQjldQueryOrder() {
         try {
             orderUserService.getQjldQueryOrder();
