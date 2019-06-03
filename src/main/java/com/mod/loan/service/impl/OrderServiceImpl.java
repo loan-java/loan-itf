@@ -102,7 +102,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             message.setUid(order.getUid());
             message.setSource(order.getSource());
             message.setTimes(0);
-            rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, message);
+            rabbitTemplate.convertAndSend(RabbitConst.qjld_queue_risk_order_notify, message);
             orderMapper.updateOrderVersion(order.getId());
         }
     }
