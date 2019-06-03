@@ -37,7 +37,6 @@ public class OrderUserServiceImpl implements OrderUserService {
         log.info("风控订单数量={}", list.size());
         if (list.size() > 0) {
             list.stream().forEach(orderUser -> {
-                log.info("风控订单信息={}", JSONObject.toJSONString(orderUser));
                 User user = userService.selectByPrimaryKey(orderUser.getUid());
                 RiskAuditMessage message = new RiskAuditMessage();
                 message.setOrderNo(orderUser.getOrderNo());

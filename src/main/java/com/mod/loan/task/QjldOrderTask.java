@@ -19,14 +19,14 @@ public class QjldOrderTask {
     private OrderUserService orderUserService;
 
     /**
-     * 每10分钟重新提取未进入风控的订单
+     * 每30分钟重新提取未进入风控的订单
      */
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void getQjldQueryOrder() {
-        try {
-            orderUserService.getQjldQueryOrder();
-        } catch (Exception e) {
-            logger.error("重新提取未进入风控的订单异常", e);
-        }
-    }
+//    @Scheduled(cron = "0 0/30 * * * ?")
+//    public void getQjldQueryOrder() {
+//        try {
+//            orderUserService.getQjldQueryOrder();
+//        } catch (Exception e) {
+//            logger.error("重新提取未进入风控的订单异常", e);
+//        }
+//    }
 }
