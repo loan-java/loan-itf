@@ -1,34 +1,32 @@
 package com.mod.loan.service.impl;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.OrderStatusEnum;
 import com.mod.loan.common.enums.OrderTypeEnum;
 import com.mod.loan.common.enums.PayStatusEnum;
 import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.common.mapper.BaseServiceImpl;
+import com.mod.loan.common.message.RiskAuditMessage;
 import com.mod.loan.config.Constant;
+import com.mod.loan.config.rabbitmq.RabbitConst;
+import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.Order;
 import com.mod.loan.model.User;
+import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.OrderService;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mod.loan.common.mapper.BaseServiceImpl;
-import com.mod.loan.common.message.RiskAuditMessage;
-import com.mod.loan.config.rabbitmq.RabbitConst;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.model.Order;
-import com.mod.loan.service.CallBackRongZeService;
-import com.mod.loan.service.OrderService;
-import org.apache.commons.collections4.CollectionUtils;
-
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
@@ -68,10 +66,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         logger.info("开始回调逾期数据");
         int count = 0;
         for (Order order1 : orderList) {
-            orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()),order1);
+            orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()), order1);
             count++;
         }
-        logger.info("回调逾期完毕,影响行数为：{}",count);
+        logger.info("回调逾期完毕,影响行数为：{}", count);
     }
 
     @Override
@@ -82,10 +80,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         logger.info("开始回调利息数据");
         int count = 0;
         for (Order order : orderList) {
-            orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order);
+            orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
             count++;
         }
-        logger.info("回调利息完毕,影响行数为：{}",count);
+        logger.info("回调利息完毕,影响行数为：{}", count);
     }
 
     @Override
@@ -97,7 +95,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     public void modifyOrderAuditAgain(int minute) {
         List<Order> list = orderMapper.findOrderWaitAutoAudit(minute);
         for (Order order : list) {
-            rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, new RiskAuditMessage(order.getId(), order.getMerchant(), 1, order.getUid(), null));
+            RiskAuditMessage message = new RiskAuditMessage();
+            message.setOrderNo(order.getOrderNo());
+            message.setStatus(1);
+            message.setMerchant(order.getMerchant());
+            message.setUid(order.getUid());
+            message.setSource(order.getSource());
+            message.setTimes(0);
+            rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, message);
             orderMapper.updateOrderVersion(order.getId());
         }
     }
@@ -118,8 +123,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
         object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
-        object.put("shouldRepayAmount",new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
-        object.put("accountId",order.getUid());
+        object.put("shouldRepayAmount", new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
+        object.put("accountId", order.getUid());
         switch (order.getStatus()) {
             case 21:
                 object.put("orderStatus", OrderStatusEnum.WAIT_PAY.getCode());
