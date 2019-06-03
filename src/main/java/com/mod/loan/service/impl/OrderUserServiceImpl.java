@@ -48,7 +48,7 @@ public class OrderUserServiceImpl implements OrderUserService {
                 message.setTimes(0);
                 log.info("风控订单消息={}", JSONObject.toJSONString(message));
                 try {
-                    rabbitTemplate.convertAndSend(RabbitConst.queue_risk_order_notify, message);
+                    rabbitTemplate.convertAndSend(RabbitConst.qjld_queue_risk_order_notify, message);
                 } catch (Exception e) {
                     log.error("消息发送异常：", e);
                 }
