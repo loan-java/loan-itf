@@ -43,6 +43,13 @@ public class Constant {
 
     public static String orgPrivateKey;
 
+
+    public static String OSS_STATIC_BUCKET_NAME;
+    public static String OSS_STATIC_BUCKET_NAME_MOBILE;
+    public static String OSS_ACCESSKEY_ID;
+    public static String OSS_ENDPOINT_IN;
+    public static String OSS_ACCESS_KEY_SECRET;
+
     @Value("${rongze.request.app.id}")
     public void setRongZeRequestAppId(String rongZeRequestAppId) {
         Constant.rongZeRequestAppId = rongZeRequestAppId;
@@ -153,6 +160,31 @@ public class Constant {
     @Value("${juhe.call.back.url}")
     public void setJuheCallBackUrl(String juheCallBackUrl) {
         Constant.juheCallBackUrl = juheCallBackUrl;
+    }
+
+    @Value("${oss.static.bucket.name:}")
+    public void setOSS_STATIC_BUCKET_NAME(String oSS_STATIC_BUCKET_NAME) {
+        OSS_STATIC_BUCKET_NAME = oSS_STATIC_BUCKET_NAME;
+    }
+
+    @Value("${oss.static.bucket.name.mobile:}")
+    public void setOSS_STATIC_BUCKET_NAME_MOBILE(String oSS_STATIC_BUCKET_NAME_MOBILE) {
+        OSS_STATIC_BUCKET_NAME_MOBILE = oSS_STATIC_BUCKET_NAME_MOBILE;
+    }
+
+    @Value("${oss.accesskey.id:}")
+    public void setOSS_ACCESSKEY_ID(String oSS_ACCESSKEY_ID) {
+        OSS_ACCESSKEY_ID = oSS_ACCESSKEY_ID;
+    }
+
+    @Value("${oss.accesskey.secret:}")
+    public void setOSS_ACCESS_KEY_SECRET(String oSS_ACCESS_KEY_SECRET) {
+        OSS_ACCESS_KEY_SECRET = oSS_ACCESS_KEY_SECRET;
+    }
+
+    @Value("${oss.endpoint.in}")
+    public void setOssEndpointIn(String ossEndpointIn) {
+        Constant.OSS_ENDPOINT_IN = ossEndpointIn;
     }
 
 }
