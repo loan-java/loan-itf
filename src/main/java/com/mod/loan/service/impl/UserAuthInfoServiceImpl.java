@@ -34,6 +34,7 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
     @Override
     public void getNeedCompletingUserAuthInfo() {
         List<UserAuthInfo> list = userAuthInfoMapper.getNeedCompletingList();
+        log.info("补全活体认证图片信息={}", list.size());
         if (list.size() > 0) {
             list.stream().forEach(userAuthInfo -> {
                 User user = userMapper.selectByPrimaryKey(userAuthInfo.getUid());
