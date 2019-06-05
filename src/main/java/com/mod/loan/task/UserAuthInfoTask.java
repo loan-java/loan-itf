@@ -1,6 +1,5 @@
 package com.mod.loan.task;
 
-import com.mod.loan.service.OrderUserService;
 import com.mod.loan.service.UserAuthInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
