@@ -38,7 +38,7 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
         if (list.size() > 0) {
             list.stream().forEach(userAuthInfo -> {
                 User user = userMapper.selectByPrimaryKey(userAuthInfo.getUid());
-                if (StringUtils.isNotBlank(userAuthInfo.getIdPositive())) {
+                if (StringUtils.isBlank(user.getImgCertFront())&&StringUtils.isNotBlank(userAuthInfo.getIdPositive())) {
                     JSONObject jsonObject1 = new JSONObject();
                     jsonObject1.put("order_no", userAuthInfo.getOrderNo());
                     jsonObject1.put("fileid", userAuthInfo.getIdPositive());
@@ -59,7 +59,7 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
                     user.setImgCertFront(imgCertFront);
                 }
 
-                if (StringUtils.isNotBlank(userAuthInfo.getIdNegative())) {
+                if (StringUtils.isBlank(user.getImgCertBack())&&StringUtils.isNotBlank(userAuthInfo.getIdNegative())) {
                     JSONObject jsonObject2 = new JSONObject();
                     jsonObject2.put("order_no", userAuthInfo.getOrderNo());
                     jsonObject2.put("fileid", userAuthInfo.getIdNegative());
@@ -80,7 +80,7 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
                     user.setImgCertBack(imgCertBack);
                 }
 
-                if (StringUtils.isNotBlank(userAuthInfo.getPhotoAssay())) {
+                if (StringUtils.isBlank(user.getImgFace())&&StringUtils.isNotBlank(userAuthInfo.getPhotoAssay())) {
                     JSONObject jsonObject3 = new JSONObject();
                     jsonObject3.put("order_no", userAuthInfo.getOrderNo());
                     jsonObject3.put("fileid", userAuthInfo.getPhotoAssay());
