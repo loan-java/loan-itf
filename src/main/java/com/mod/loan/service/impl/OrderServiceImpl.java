@@ -66,8 +66,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         logger.info("开始回调逾期数据");
         int count = 0;
         for (Order order1 : orderList) {
-            orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()), order1);
-            count++;
+            if (order1.getSource() == 0) {
+                orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()), order1);
+                count++;
+            }
         }
         logger.info("回调逾期完毕,影响行数为：{}", count);
     }
@@ -80,8 +82,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         logger.info("开始回调利息数据");
         int count = 0;
         for (Order order : orderList) {
-            orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
-            count++;
+            if (order.getSource() == 0) {
+                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
+                count++;
+            }
         }
         logger.info("回调利息完毕,影响行数为：{}", count);
     }
