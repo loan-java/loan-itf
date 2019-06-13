@@ -117,6 +117,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     }
 
     @Override
+    public List<Order> findTodayOverdueInfo() {
+        return orderMapper.findTodayOverdueInfo();
+    }
+
+    @Override
     public int updateToBadDebt() {
         return orderMapper.updateToBadDebt();
     }
@@ -190,5 +195,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
         CallBackJuHeUtil.callBack(Constant.juheCallBackUrl, object);
     }
+
 
 }

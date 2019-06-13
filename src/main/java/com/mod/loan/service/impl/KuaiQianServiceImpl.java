@@ -11,6 +11,7 @@ import com.mod.loan.model.UserBank;
 import com.mod.loan.service.KuaiQianService;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.UserBankService;
+import com.mod.loan.service.UserService;
 import com.mod.loan.util.StringUtil;
 import com.mod.loan.util.TimeUtils;
 import com.mod.loan.util.kuaiqian.Post;
@@ -21,6 +22,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,12 +41,16 @@ public class KuaiQianServiceImpl implements KuaiQianService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Resource
+    private UserService userService;
     /**
      * 还款
      */
     @Override
-    public void repay(Order order, long uid, User user) {
-        UserBank userBank = userBankService.selectUserCurrentBankCard(uid);
+    public void repay(Order order) {
+        UserBank userBank = userBankService.selectUserCurrentBankCard(order.getUid());
+
+        User user = userService.selectByPrimaryKey(order.getUid());
 
         TransInfo transInfo = new TransInfo();
         /* 消费信息 */
@@ -69,7 +75,7 @@ public class KuaiQianServiceImpl implements KuaiQianService {
         //外部跟踪号
         String externalRefNumber = StringUtil.getOrderNumber("kq");
         //客户号
-        String customerId = Constant.KUAI_QIAN_UID_PFX + uid;
+        String customerId = Constant.KUAI_QIAN_UID_PFX + user.getId();
         //tr3回调地址
         String tr3Url = "";
 
@@ -132,7 +138,7 @@ public class KuaiQianServiceImpl implements KuaiQianService {
                 logger.info("快钱协议支付接口, 调用成功, 交易成功, orderNo={}, repayNo={}", order.getOrderNo(), externalRefNumber);
                 OrderRepay orderRepay = new OrderRepay();
                 orderRepay.setRepayNo(externalRefNumber);
-                orderRepay.setUid(uid);
+                orderRepay.setUid(user.getId());
                 orderRepay.setOrderId(order.getId());
                 orderRepay.setRepayType(7);
                 BigDecimal repayMoney = new BigDecimal(amount);

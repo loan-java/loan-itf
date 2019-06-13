@@ -1,12 +1,11 @@
 package com.mod.loan.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.mod.loan.common.mapper.BaseService;
 import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderPay;
 import com.mod.loan.model.User;
+
+import java.util.List;
+import java.util.Map;
 
 public interface OrderService extends BaseService<Order, Long> {
 
@@ -28,5 +27,7 @@ public interface OrderService extends BaseService<Order, Long> {
     List<Order> findByRepayTime(String repayTime);
 
     void orderCallBack(User user, Order order);
+
+    List<Order> findTodayOverdueInfo();
 
 }

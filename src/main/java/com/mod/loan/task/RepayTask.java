@@ -29,20 +29,38 @@ public class RepayTask {
     private OrderRepayService orderRepayService;
 
     /**
-     * 自动扣款定时任务每天11点18点执行两次
+     * 到期自动扣款定时任务每天11点18点执行两次
      */
     @Scheduled(cron = "0 0 11,18 * * ?")
-    public void updateOverdueInfoTask() {
+    public void getExpireInfoTask() {
         try {
-            logger.info("=====自动扣款定时任务 开始=====");
+            logger.info("=====到期自动扣款定时任务 开始=====");
             String repayTime = TimeUtils.parseTime(new Date(), TimeUtils.dateformat2);
             List<Order> list = orderService.findByRepayTime(repayTime);
             for (Order order : list) {
                 orderRepayService.repay(order);
             }
-            logger.info("=====自动扣款定时任务 结束=====");
+            logger.info("=====到期自动扣款定时任务 结束=====");
         } catch (Exception e) {
-            logger.error("自动扣款定时任务异常", e);
+            logger.error("到期自动扣款定时任务异常", e);
+        }
+    }
+
+
+    /**
+     * 逾期自动扣款定时任务每天12点执行
+     */
+    @Scheduled(cron = "0 0 12 * * ?")
+    public void getOverdueInfoTask() {
+        try {
+            logger.info("=====逾期自动扣款定时任务 开始=====");
+            List<Order> list = orderService.findTodayOverdueInfo();
+            for (Order order : list) {
+                orderRepayService.repay(order);
+            }
+            logger.info("=====逾期自动扣款定时任务 结束=====");
+        } catch (Exception e) {
+            logger.error("逾期自动扣款定时任务异常", e);
         }
     }
 }

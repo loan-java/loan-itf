@@ -9,5 +9,5 @@ import com.mod.loan.model.User;
  */
 public interface KuaiQianService {
 
-    void repay(Order order, long uid, User user);
+    void repay(Order order);
 }
