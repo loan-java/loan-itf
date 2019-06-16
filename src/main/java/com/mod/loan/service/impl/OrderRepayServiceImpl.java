@@ -14,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 @Service
 public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> implements OrderRepayService {
     private static Logger logger = LoggerFactory.getLogger(OrderPayServiceImpl.class);
@@ -21,10 +23,10 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired
+    @Resource
     private OrderRepayMapper orderRepayMapper;
 
-    @Autowired
+    @Resource
     private OrderMapper orderMapper;
 
     @Autowired
@@ -42,6 +44,8 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
 
     @Autowired
     private BaofooService baofooService;
+    @Resource
+    private YeePayService yeePayService;
 
     @Override
     public void updateOrderRepayInfo(OrderRepay orderRepay, Order order) {
@@ -66,6 +70,10 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
             case 5:
                 kuaiQianService.repay(order);
                 break;
+            case 6:
+                yeePayService.repay(order);
+                break;
+
             default:
                 break;
         }

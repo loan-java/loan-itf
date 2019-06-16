@@ -160,6 +160,15 @@
 			<artifactId>lombok</artifactId>
 			<version>1.16.8</version>
 		</dependency>
+
+		<dependency>
+			<groupId>yeepay</groupId>
+			<artifactId>yeepay-sdk</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/lib/yop-java-sdk-3.1.9-jdk18.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>
