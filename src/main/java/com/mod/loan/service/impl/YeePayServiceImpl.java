@@ -41,31 +41,6 @@ public class YeePayServiceImpl implements YeePayService {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    //绑卡
-    @Override
-    public void requestBindCard(long uid, String orderNo, String cardno, String phone) throws Exception {
-
-        User user = userService.selectByPrimaryKey(uid);
-        if (user == null) throw new BizException("用户(" + uid + ")不存在");
-
-        String identityid = "" + uid;
-        String idcardno = user.getUserCertNo();
-        String username = user.getUserName();
-
-        YeePayApiRequest.bindCardRequest(orderNo, identityid, cardno, idcardno, username, phone);
-
-    }
-
-    //确认绑卡
-    @Override
-    public void confirmBindCard(String orderNo, String validateCode) throws Exception {
-        JSONObject result = YeePayApiRequest.bindCardConfirm(orderNo, validateCode);
-        String status = result.getString("status");
-        if ("BIND_SUCCESS".equalsIgnoreCase(status)) return;
-
-        throw new BizException("绑卡失败: " + status);
-    }
-
     //还款
     @Override
     public ResultMessage repay(Order order) {
