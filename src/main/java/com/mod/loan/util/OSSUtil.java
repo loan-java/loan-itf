@@ -6,8 +6,6 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.mod.loan.config.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
@@ -16,7 +14,6 @@ import java.util.UUID;
 
 @Slf4j
 public class OSSUtil {
-
 
 
     public static String upload(MultipartFile file) {
@@ -82,7 +79,7 @@ public class OSSUtil {
             String newFileName = UUID.randomUUID().toString().replaceAll("-", "") + fileType;
             filepath = new DateTime().getYear() + "/" + new DateTime().toString("MMdd") + "/" + newFileName;
             PutObjectResult result = ossClient.putObject(Constant.OSS_STATIC_BUCKET_NAME, filepath, new ByteArrayInputStream(bytes1));
-            log.info("上传照片：" + JSONObject.toJSONString(result));
+            log.info("上传照片:{}", JSONObject.toJSONString(result));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("文件上传失败", e);
