@@ -46,6 +46,8 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     private BaofooService baofooService;
     @Resource
     private YeePayService yeePayService;
+    @Resource
+    private ChanpayService chanpayService;
 
     @Override
     public void updateOrderRepayInfo(OrderRepay orderRepay, Order order) {
@@ -64,14 +66,17 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
         Merchant merchant = merchantService.selectByPrimaryKey(user.getMerchant());
 
         switch (merchant.getBindType()) {
+            case 2:
+                chanpayService.repay(order);
+                break;
+            case 3:
+                yeePayService.repay(order);
+                break;
             case 4:
                 baofooService.repay(order);
                 break;
             case 5:
                 kuaiQianService.repay(order);
-                break;
-            case 6:
-                yeePayService.repay(order);
                 break;
 
             default:
