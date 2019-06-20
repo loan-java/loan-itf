@@ -29,9 +29,9 @@ public class RepayTask {
     private OrderRepayService orderRepayService;
 
     /**
-     * 到期自动扣款定时任务每天11点18点执行两次
+     * 到期自动扣款定时任务每天11点执行一次
      */
-    @Scheduled(cron = "0 0 11,18 * * ?")
+    @Scheduled(cron = "0 0 11 * * ?")
     public void getExpireInfoTask() {
         try {
             logger.info("=====到期自动扣款定时任务 开始=====");
