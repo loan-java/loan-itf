@@ -15,6 +15,7 @@ import com.mod.loan.model.Order;
 import com.mod.loan.model.User;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ThreadPoolUtils;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     @Override
     public void updateOverdueInfo() {
-
         int numOne = orderMapper.updateToOverdue();
         logger.info("今日逾期订单数为：{}", numOne);
         int numTwo = orderMapper.updateOverdueFee();
@@ -53,25 +53,29 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         //逾期推送融泽订单状态
         List<Order> list = orderMapper.selectOverdueOrderRZ();
         if (CollectionUtils.isNotEmpty(list)) {
-            list.forEach(order -> {
-                if (order.getSource() == 1) {
-                    callBackRongZeService.pushOrderStatus(order);
-                }
+            list.stream().forEach(order -> {
+                ThreadPoolUtils.executor.execute(() -> {
+                    if (order.getSource() == 1) {
+                        callBackRongZeService.pushOrderStatus(order);
+                    }
+                });
             });
         }
-        //推送流量端
+        //逾期推送嗖嗖流量端
         Order order = new Order();
         order.setStatus(33);
         List<Order> orderList = orderMapper.select(order);
         logger.info("开始回调逾期数据");
-        int count = 0;
-        for (Order order1 : orderList) {
-            if (order1.getSource() == 0) {
-                orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()), order1);
-                count++;
-            }
+        if (CollectionUtils.isNotEmpty(orderList)) {
+            orderList.stream().forEach(order1 -> {
+                ThreadPoolUtils.executor.execute(() -> {
+                    if (order1.getSource() == 0) {
+                        orderCallBack(userMapper.selectByPrimaryKey(order1.getUid()), order1);
+                    }
+                });
+            });
         }
-        logger.info("回调逾期完毕,影响行数为：{}", count);
+        logger.info("逾期回调完毕");
     }
 
     @Override
@@ -81,13 +85,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         List<Order> orderList = orderMapper.selectOrderList();
         logger.info("开始回调利息数据");
         int count = 0;
-        for (Order order : orderList) {
-            if (order.getSource() == 0) {
-                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
-                count++;
-            }
+        if (CollectionUtils.isNotEmpty(orderList)) {
+            orderList.stream().forEach(order -> {
+                ThreadPoolUtils.executor.execute(() -> {
+                    if (order.getSource() == 0) {
+                        orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
+                    }
+                });
+            });
         }
-        logger.info("回调利息完毕,影响行数为：{}", count);
+        logger.info("利息回调完毕");
     }
 
     @Override
