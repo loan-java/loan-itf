@@ -81,7 +81,7 @@ public class ChanpayServiceImpl implements ChanpayService {
             message.setMerchantAlias(user.getMerchant());
             message.setRepayNo(order.getOrderNo());
             message.setTimes(1);
-            message.setRepayType(1);
+            message.setRepayType(2);
             rabbitTemplate.convertAndSend(RabbitConst.chanpay_queue_repay_order_query, message);
 
             JSONObject object = new JSONObject();
