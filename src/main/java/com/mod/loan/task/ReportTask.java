@@ -19,7 +19,7 @@ public class ReportTask {
 
 	public static final Logger logger = LoggerFactory.getLogger(ReportTask.class);
 
-	@Value("${server.itf.url}")
+	@Value("${server.itf.url:}")
 	String server_itf_url;
 	@Autowired
 	private MerchantService merchantService;
