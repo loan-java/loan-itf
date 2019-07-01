@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mod.loan.mapper.MerchantMapper">
 	<resultMap id="BaseResultMap" type="com.mod.loan.model.Merchant">
-		<!-- WARNING - @mbg.generated -->
 		<id column="merchant_alias" jdbcType="VARCHAR" property="merchantAlias" />
 		<result column="merchant_name" jdbcType="VARCHAR" property="merchantName" />
 		<result column="merchant_app" jdbcType="VARCHAR" property="merchantApp" />
@@ -23,8 +22,8 @@
 		<result column="huiju_id" jdbcType="VARCHAR" property="huiju_id" />
 		<result column="huiju_md5_key" jdbcType="VARCHAR" property="huiju_md5_key" />
 		<result column="bind_type" jdbcType="TINYINT" property="bindType" />
+		<result column="risk_type" jdbcType="TINYINT" property="riskType" />
 	</resultMap>
-	
 	<select id="selectMerchantAliasByStatus" resultMap="BaseResultMap">
 		select merchant_alias from tb_merchant where merchant_status = #{status}
 	</select>
