@@ -11,12 +11,15 @@ import com.mod.loan.config.Constant;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.Merchant;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.User;
 import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderService;
 import com.mod.loan.util.ThreadPoolUtils;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
 
@@ -42,6 +46,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     @Autowired
     private UserMapper userMapper;
+
+
+    @Autowired
+    private MerchantService merchantService;
 
     @Override
     public void updateOverdueInfo() {
@@ -106,15 +114,31 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     public void modifyOrderAuditAgain(int minute) {
         List<Order> list = orderMapper.findOrderWaitAutoAudit(minute);
         for (Order order : list) {
-            RiskAuditMessage message = new RiskAuditMessage();
-            message.setOrderNo(order.getOrderNo());
-            message.setStatus(1);
-            message.setMerchant(order.getMerchant());
-            message.setUid(order.getUid());
-            message.setSource(order.getSource());
-            message.setTimes(0);
-            rabbitTemplate.convertAndSend(RabbitConst.qjld_queue_risk_order_notify, message);
-            orderMapper.updateOrderVersion(order.getId());
+            ThreadPoolUtils.executor.execute(() -> {
+                Merchant merchant = merchantService.findMerchantByAlias(order.getMerchant());
+                RiskAuditMessage message = new RiskAuditMessage();
+                message.setOrderId(order.getId());
+                message.setOrderNo(order.getOrderNo());
+                message.setStatus(1);
+                message.setMerchant(order.getMerchant());
+                message.setUid(order.getUid());
+                message.setSource(order.getSource());
+                message.setTimes(0);
+                switch (merchant.getRiskType()) {
+                    case 1:
+                        log.info("===============开始进入风控队列qjld====================" + order.getOrderNo());
+                        rabbitTemplate.convertAndSend(RabbitConst.qjld_queue_risk_order_notify, message);
+                        break;
+                    case 2:
+                        log.info("===============开始进入风控队列pb====================" + order.getOrderNo());
+                        rabbitTemplate.convertAndSend(RabbitConst.pb_queue_risk_order_notify, message);
+                        break;
+                    case 3:
+                        log.info("===============开始进入风控队列zm====================" + order.getOrderNo());
+                        rabbitTemplate.convertAndSend(RabbitConst.zm_queue_risk_order_notify, message);
+                        break;
+                }
+            });
         }
     }
 

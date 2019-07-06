@@ -6,6 +6,10 @@ public class RabbitConst {
 
     public final static String qjld_queue_risk_order_notify = "qjld_queue_risk_order_notify"; // 全景雷达风控订单审核通知
 
+    public final static String pb_queue_risk_order_notify = "pb_queue_risk_order_notify"; // 盘宝风控订单审核通知
+
+    public final static String zm_queue_risk_order_notify = "zm_queue_risk_order_notify"; // 指谜风控订单审核通知
+
 
     public final static String baofoo_queue_repay_order_query = "baofoo_queue_repay_order_query";
     public final static String kuaiqian_queue_repay_order_query = "kuaiqian_queue_repay_order_query";

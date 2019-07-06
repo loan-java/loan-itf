@@ -8,4 +8,6 @@ import com.mod.loan.model.Merchant;
 public interface MerchantService extends BaseService<Merchant, String> {
 
 	List<Merchant> selectMerchantAliasByStatus(int status);
+
+	Merchant findMerchantByAlias(String merchantAlias);
 }

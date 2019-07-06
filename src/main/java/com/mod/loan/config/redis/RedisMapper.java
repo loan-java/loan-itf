@@ -33,6 +33,11 @@ public class RedisMapper {
 		redisTemplate.delete(REDIS_PRE + key);
 	}
 
+
+	public Boolean hasKey(String key) {
+		return redisTemplate.hasKey(key);
+	}
+
 	public void set(String key, Object value) {
 		redisTemplate.opsForValue().set(REDIS_PRE + key, serializer(value));
 	}

@@ -65,7 +65,7 @@
 	</select>
 
     <select id="findOrderWaitAutoAudit" resultMap="BaseResultMap">
-		select id,uid,merchant from tb_order where status=11 and order_version &lt;=10 and  create_time &lt;= DATE_SUB(NOW(),INTERVAL #{minute}  MINUTE )
+		select id,uid,merchant from tb_order where status=11  and  create_time &lt;= DATE_SUB(NOW(),INTERVAL #{minute}  MINUTE )
 	</select>
 
     <update id="updateOrderVersion">
