@@ -237,6 +237,7 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>env/*/*</exclude>
+					<exclude>lib/*</exclude>
 				</excludes>
 			</resource>
 			<resource>
