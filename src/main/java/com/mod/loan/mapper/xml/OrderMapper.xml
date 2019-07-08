@@ -78,8 +78,8 @@
 		FROM
 			tb_order
 		WHERE
-			`status` = 31
-			AND repay_time = #{repayTime};
+			status = 31
+			AND repay_time = #{repayTime}
 	</select>
     <select id="findOverdueOrders" resultMap="BaseResultMap">
 		select * from tb_order where merchant="zhenhaohua" and status = 33 and DATEDIFF(NOW(),repay_time) >= 1
