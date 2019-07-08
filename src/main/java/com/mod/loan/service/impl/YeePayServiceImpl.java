@@ -85,7 +85,7 @@ public class YeePayServiceImpl implements YeePayService {
             orderRepay.setRepayNo(yborderid);
             orderRepay.setUid(uid);
             orderRepay.setOrderId(order.getId());
-            orderRepay.setRepayType(1);
+            orderRepay.setRepayType(7);
             BigDecimal repayMoney = new BigDecimal(amount);
             orderRepay.setRepayMoney(repayMoney);
             orderRepay.setBank(userBank.getCardName());

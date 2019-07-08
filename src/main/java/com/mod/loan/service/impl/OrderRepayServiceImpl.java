@@ -78,7 +78,6 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
             case 7:
                 yeePayService.repay(order);
                 break;
-
             default:
                 break;
         }

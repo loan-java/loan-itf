@@ -65,7 +65,7 @@ public class ChanpayServiceImpl implements ChanpayService {
             orderRepay.setRepayNo(tid);
             orderRepay.setUid(uid);
             orderRepay.setOrderId(order.getId());
-            orderRepay.setRepayType(1);
+            orderRepay.setRepayType(7);
             BigDecimal repayMoney = new BigDecimal(amount);
             orderRepay.setRepayMoney(repayMoney);
             orderRepay.setBank(userBank.getCardName());
