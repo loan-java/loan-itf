@@ -64,6 +64,7 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     public void repay(Order order) {
         User user = userService.selectByPrimaryKey(order.getUid());
         Merchant merchant = merchantService.selectByPrimaryKey(user.getMerchant());
+        logger.info("逾期订单id: {}, bindType={}", order.getId(), merchant.getBindType());
 
         switch (merchant.getBindType()) {
             case 4:
