@@ -3,7 +3,6 @@ package com.mod.loan.task;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.ThreadPoolUtils;
 import com.mod.loan.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +38,7 @@ public class RepayTask {
             String repayTime = TimeUtils.parseTime(new Date(), TimeUtils.dateformat2);
             List<Order> list = orderService.findByRepayTime(repayTime);
             for (Order order : list) {
-                ThreadPoolUtils.executor.execute(() -> {
-                    orderRepayService.repay(order);
-                });
+                orderRepayService.repay(order);
             }
             logger.info("=====到期自动扣款定时任务 结束=====");
         } catch (Exception e) {
@@ -59,9 +56,7 @@ public class RepayTask {
             logger.info("=====逾期自动扣款定时任务 开始=====");
             List<Order> list = orderService.findTodayOverdueInfo();
             for (Order order : list) {
-                ThreadPoolUtils.executor.execute(() -> {
-                    orderRepayService.repay(order);
-                });
+                orderRepayService.repay(order);
             }
             logger.info("=====逾期自动扣款定时任务 结束=====");
         } catch (Exception e) {
