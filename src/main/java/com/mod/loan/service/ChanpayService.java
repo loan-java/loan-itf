@@ -11,5 +11,5 @@ public interface ChanpayService {
      * @param order
      * @return
      */
-    ResultMessage repay(Order order);
+    void repay(Order order);
 }

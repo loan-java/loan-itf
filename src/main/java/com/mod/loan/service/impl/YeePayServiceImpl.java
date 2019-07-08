@@ -2,10 +2,8 @@ package com.mod.loan.service.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.exception.BizException;
 import com.mod.loan.common.message.OrderRepayQueryMessage;
-import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.config.Constant;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.model.Order;
@@ -45,7 +43,7 @@ public class YeePayServiceImpl implements YeePayService {
 
     //还款
     @Override
-    public ResultMessage repay(Order order) {
+    public void repay(Order order) {
         try {
             String timeStr = System.currentTimeMillis() + "";
             String requestno = order.getOrderNo() + timeStr.substring(timeStr.length() - 6);
@@ -77,7 +75,8 @@ public class YeePayServiceImpl implements YeePayService {
 
             String status = result.getString("status");
             if ("PAY_FAIL".equalsIgnoreCase(status) || "FAIL".equalsIgnoreCase(status)) {
-                return new ResultMessage(ResponseEnum.M4000.getCode(), "易宝还款失败: " + status);
+                log.error("易宝还款失败: " + status);
+                return;
             }
 
             String yborderid = result.getString("yborderid");
@@ -103,14 +102,9 @@ public class YeePayServiceImpl implements YeePayService {
             message.setTimes(1);
             message.setRepayType(2);
             rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_repay_order_query, message);
-
-            JSONObject object = new JSONObject();
-            object.put("repayOrderNo", yborderid);
-            object.put("shouldRepayAmount", amount);
-            return new ResultMessage(ResponseEnum.M2000, object);
+            return;
         } catch (Exception e) {
             log.error("易宝还款异常: " + e.getMessage(), e);
-            return new ResultMessage(ResponseEnum.M4000.getCode(), "易宝还款失败: " + e.getMessage());
         }
     }
 

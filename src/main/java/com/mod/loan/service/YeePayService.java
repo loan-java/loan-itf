@@ -9,5 +9,5 @@ import com.mod.loan.model.Order;
  */
 public interface YeePayService {
     //还款
-    ResultMessage repay(Order order);
+    void repay(Order order);
 }

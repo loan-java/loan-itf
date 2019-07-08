@@ -1,6 +1,5 @@
 package com.mod.loan.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.exception.BizException;
 import com.mod.loan.common.message.OrderRepayQueryMessage;
@@ -46,7 +45,7 @@ public class ChanpayServiceImpl implements ChanpayService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
-    public ResultMessage repay(Order order) {
+    public void repay(Order order) {
         try {
             long uid = order.getUid();
             String userId = "" + uid;
@@ -83,14 +82,9 @@ public class ChanpayServiceImpl implements ChanpayService {
             message.setTimes(1);
             message.setRepayType(2);
             rabbitTemplate.convertAndSend(RabbitConst.chanpay_queue_repay_order_query, message);
-
-            JSONObject object = new JSONObject();
-            object.put("repayOrderNo", tid);
-            object.put("shouldRepayAmount", amount);
-            return new ResultMessage(ResponseEnum.M2000, object);
+            return;
         } catch (Exception e) {
             log.error("畅捷还款异常: " + e.getMessage(), e);
-            return new ResultMessage(ResponseEnum.M4000.getCode(), "畅捷还款失败: " + e.getMessage());
         }
     }
 }

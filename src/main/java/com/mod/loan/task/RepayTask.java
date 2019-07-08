@@ -3,6 +3,7 @@ package com.mod.loan.task;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ThreadPoolUtils;
 import com.mod.loan.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +30,18 @@ public class RepayTask {
     private OrderRepayService orderRepayService;
 
     /**
-     * 到期自动扣款定时任务每天11点执行一次
+     * 到期自动扣款定时任务每天18点执行一次
      */
-    @Scheduled(cron = "0 0 11 * * ?")
+    @Scheduled(cron = "0 0 18 * * ?")
     public void getExpireInfoTask() {
         try {
             logger.info("=====到期自动扣款定时任务 开始=====");
             String repayTime = TimeUtils.parseTime(new Date(), TimeUtils.dateformat2);
             List<Order> list = orderService.findByRepayTime(repayTime);
             for (Order order : list) {
-                orderRepayService.repay(order);
+                ThreadPoolUtils.executor.execute(() -> {
+                    orderRepayService.repay(order);
+                });
             }
             logger.info("=====到期自动扣款定时任务 结束=====");
         } catch (Exception e) {
@@ -48,15 +51,17 @@ public class RepayTask {
 
 
     /**
-     * 逾期自动扣款定时任务每天12点执行
+     * 逾期自动扣款定时任务每天19点执行
      */
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 19 * * ?")
     public void getOverdueInfoTask() {
         try {
             logger.info("=====逾期自动扣款定时任务 开始=====");
             List<Order> list = orderService.findTodayOverdueInfo();
             for (Order order : list) {
-                orderRepayService.repay(order);
+                ThreadPoolUtils.executor.execute(() -> {
+                    orderRepayService.repay(order);
+                });
             }
             logger.info("=====逾期自动扣款定时任务 结束=====");
         } catch (Exception e) {
