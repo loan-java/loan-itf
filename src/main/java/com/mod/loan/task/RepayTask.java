@@ -38,6 +38,7 @@ public class RepayTask {
             logger.info("=====到期自动扣款定时任务 开始=====");
             String repayTime = TimeUtils.parseTime(new Date(), TimeUtils.dateformat2);
             List<Order> list = orderService.findByRepayTime(repayTime);
+            logger.info("到期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
                     orderRepayService.repay(order);
@@ -58,6 +59,7 @@ public class RepayTask {
         try {
             logger.info("=====逾期自动扣款定时任务 开始=====");
             List<Order> list = orderService.findTodayOverdueInfo();
+            logger.info("逾期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
                     orderRepayService.repay(order);
