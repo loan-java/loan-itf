@@ -13,5 +13,5 @@ public interface OrderRepayService extends BaseService<OrderRepay, String> {
 
     int countRepaySuccess(Long orderId);
 
-    void repay(Order order);
+    void repay(Order order) throws Exception;
 }

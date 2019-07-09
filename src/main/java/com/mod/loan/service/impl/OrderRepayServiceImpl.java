@@ -61,7 +61,7 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     }
 
     @Override
-    public void repay(Order order) {
+    public void repay(Order order) throws Exception {
         User user = userService.selectByPrimaryKey(order.getUid());
         Merchant merchant = merchantService.selectByPrimaryKey(user.getMerchant());
         logger.info("逾期订单id: {}, bindType={}", order.getId(), merchant.getBindType());
@@ -80,8 +80,8 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
                 yeePayService.repay(order);
                 break;
             default:
-                break;
+                throw new Exception("支付渠道异常");
         }
     }
-
+    
 }

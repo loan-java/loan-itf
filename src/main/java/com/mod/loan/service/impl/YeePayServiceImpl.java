@@ -1,7 +1,6 @@
 package com.mod.loan.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.exception.BizException;
 import com.mod.loan.common.message.OrderRepayQueryMessage;
 import com.mod.loan.config.Constant;
@@ -14,6 +13,7 @@ import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.UserBankService;
 import com.mod.loan.service.UserService;
 import com.mod.loan.service.YeePayService;
+import com.mod.loan.util.yeepay.StringResultDTO;
 import com.mod.loan.util.yeepay.YeePayApiRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -70,19 +70,18 @@ public class YeePayServiceImpl implements YeePayService {
             // 协议支付： SQKKSCENEKJ010 代扣： SQKKSCENE10 商户需开通对应协议支付/代扣权限
             String terminalno = "SQKKSCENEKJ010";
 
-            JSONObject result = YeePayApiRequest.cardPayRequest(
+            StringResultDTO result = YeePayApiRequest.cardPayRequest(
                     requestno, identityid, cardtop, cardlast, amount, productname, terminalno, false);
 
-            String status = result.getString("status");
+            String status = result.getStatus();
             if ("PAY_FAIL".equalsIgnoreCase(status) || "FAIL".equalsIgnoreCase(status)) {
                 log.error("易宝还款失败: " + status);
                 return;
             }
 
-            String yborderid = result.getString("yborderid");
 
             OrderRepay orderRepay = new OrderRepay();
-            orderRepay.setRepayNo(yborderid);
+            orderRepay.setRepayNo(result.getYborderid());
             orderRepay.setUid(uid);
             orderRepay.setOrderId(order.getId());
             orderRepay.setRepayType(7);
@@ -98,7 +97,7 @@ public class YeePayServiceImpl implements YeePayService {
             User user = userService.selectByPrimaryKey(order.getUid());
             OrderRepayQueryMessage message = new OrderRepayQueryMessage();
             message.setMerchantAlias(user.getMerchant());
-            message.setRepayNo(yborderid);
+            message.setRepayNo(result.getYborderid());
             message.setTimes(1);
             message.setRepayType(2);
             rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_repay_order_query, message);

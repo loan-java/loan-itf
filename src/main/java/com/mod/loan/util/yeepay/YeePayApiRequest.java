@@ -14,7 +14,7 @@ import java.util.Map;
 public class YeePayApiRequest {
 
     //绑卡支付请求
-    public static JSONObject cardPayRequest(String requestno, String identityid, String cardtop,
+    public static StringResultDTO cardPayRequest(String requestno, String identityid, String cardtop,
                                              String cardlast, String amount, String productname, String terminalno, boolean issms) throws Exception {
         String unibindcardpayUri = Config.getInstance().getValue("unibindcardpayUri");
         String merchantno = Config.getInstance().getValue("merchantno");

@@ -1,6 +1,5 @@
 package com.mod.loan.task;
 
-import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
@@ -33,7 +32,7 @@ public class RepayTask {
     /**
      * 到期自动扣款定时任务每天18点执行一次
      */
-    @Scheduled(cron = "0 0 18 * * ?")
+    @Scheduled(cron = "0 35 19 * * ?")
     public void getExpireInfoTask() {
         try {
             logger.info("=====到期自动扣款定时任务 开始=====");
@@ -42,9 +41,11 @@ public class RepayTask {
             logger.info("到期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
-                    logger.info("到期自动扣款定时任务循环开始:{}", JSONObject.toJSONString(order));
-                    orderRepayService.repay(order);
-                    logger.info("到期自动扣款定时任务循环结束");
+                    try {
+                        orderRepayService.repay(order);
+                    } catch (Exception e) {
+                        logger.error("到期自动扣款定时任务异常", e);
+                    }
                 });
             }
             logger.info("=====到期自动扣款定时任务 结束=====");
@@ -57,7 +58,7 @@ public class RepayTask {
     /**
      * 逾期自动扣款定时任务每天19点执行
      */
-    @Scheduled(cron = "0 0 19 * * ?")
+    @Scheduled(cron = "0 36 19 * * ?")
     public void getOverdueInfoTask() {
         try {
             logger.info("=====逾期自动扣款定时任务 开始=====");
@@ -65,9 +66,11 @@ public class RepayTask {
             logger.info("逾期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
-                    logger.info("逾期自动扣款定时任务循环开始:{}", JSONObject.toJSONString(order));
-                    orderRepayService.repay(order);
-                    logger.info("逾期自动扣款定时任务循环结束");
+                    try {
+                        orderRepayService.repay(order);
+                    } catch (Exception e) {
+                        logger.error("逾期自动扣款定时任务异常", e);
+                    }
                 });
             }
             logger.info("=====逾期自动扣款定时任务 结束=====");
