@@ -58,7 +58,7 @@ public class RepayTask {
     /**
      * 逾期自动扣款定时任务每天19点执行
      */
-    @Scheduled(cron = "0 45 19 * * ?")
+    @Scheduled(cron = "0 50 19 * * ?")
     public void getOverdueInfoTask() {
         try {
             logger.info("=====逾期自动扣款定时任务 开始=====");
