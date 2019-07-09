@@ -64,7 +64,6 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
     public void repay(Order order) throws Exception {
         User user = userService.selectByPrimaryKey(order.getUid());
         Merchant merchant = merchantService.selectByPrimaryKey(user.getMerchant());
-        logger.info("逾期订单id: {}, bindType={}", order.getId(), merchant.getBindType());
 
         switch (merchant.getBindType()) {
             case 4:
@@ -77,7 +76,6 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
                 chanpayService.repay(order);
                 break;
             case 7:
-                logger.info("bindType={}", 7);
                 yeePayService.repay(order);
                 break;
             default:

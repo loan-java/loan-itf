@@ -36,7 +36,6 @@ public class YeepayUtil {
 
         //向YOP发请求
         YopResponse response = YopRsaClient.post(Uri, request);
-        log.info("易宝返回: " + JSON.toJSONString(response));
 
         checkFailResp(response);
         return parseResult(response.getStringResult());
