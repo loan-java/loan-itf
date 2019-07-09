@@ -1,5 +1,6 @@
 package com.mod.loan.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
@@ -41,7 +42,9 @@ public class RepayTask {
             logger.info("到期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
+                    logger.info("到期自动扣款定时任务循环开始:{}", JSONObject.toJSONString(order));
                     orderRepayService.repay(order);
+                    logger.info("到期自动扣款定时任务循环结束");
                 });
             }
             logger.info("=====到期自动扣款定时任务 结束=====");
@@ -62,7 +65,9 @@ public class RepayTask {
             logger.info("逾期自动扣款数量:{}", list.size());
             for (Order order : list) {
                 ThreadPoolUtils.executor.execute(() -> {
+                    logger.info("逾期自动扣款定时任务循环开始:{}", JSONObject.toJSONString(order));
                     orderRepayService.repay(order);
+                    logger.info("逾期自动扣款定时任务循环结束");
                 });
             }
             logger.info("=====逾期自动扣款定时任务 结束=====");
