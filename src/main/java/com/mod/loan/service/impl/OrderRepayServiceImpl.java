@@ -77,11 +77,12 @@ public class OrderRepayServiceImpl extends BaseServiceImpl<OrderRepay, String> i
                 chanpayService.repay(order);
                 break;
             case 7:
+                logger.info("bindType={}", 7);
                 yeePayService.repay(order);
                 break;
             default:
                 throw new Exception("支付渠道异常");
         }
     }
-    
+
 }

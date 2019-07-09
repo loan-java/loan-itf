@@ -74,12 +74,14 @@ public class YeePayServiceImpl implements YeePayService {
                     requestno, identityid, cardtop, cardlast, amount, productname, terminalno, false);
 
             String status = result.getStatus();
+            log.info("易宝返回值:{}", status);
             if ("PAY_FAIL".equalsIgnoreCase(status) || "FAIL".equalsIgnoreCase(status)) {
                 log.error("易宝还款失败: " + status);
                 return;
             }
 
 
+            log.info("插入还款记录开始");
             OrderRepay orderRepay = new OrderRepay();
             orderRepay.setRepayNo(result.getYborderid());
             orderRepay.setUid(uid);
@@ -101,6 +103,7 @@ public class YeePayServiceImpl implements YeePayService {
             message.setTimes(1);
             message.setRepayType(2);
             rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_repay_order_query, message);
+            log.info("插入还款记录结束");
             return;
         } catch (Exception e) {
             log.error("易宝还款异常: " + e.getMessage(), e);
