@@ -5,6 +5,7 @@ import com.mod.loan.common.message.QueueSmsMessage;
 import com.mod.loan.config.rabbitmq.RabbitConst;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ThreadPoolUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +34,16 @@ public class MessageTask {
         try {
             List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", -1);
             for (Map<String, Object> order : orderList) {
-                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
-                QueueSmsMessage smsMessage = new QueueSmsMessage();
-                smsMessage.setClientAlias(order.get("merchant").toString());
-                smsMessage.setType(SmsTemplate.T005.getKey());
-                smsMessage.setPhone(order.get("userPhone").toString());
-                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
-                rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                ThreadPoolUtils.executor.execute(() -> {
+                    Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+                    QueueSmsMessage smsMessage = new QueueSmsMessage();
+                    smsMessage.setClientAlias(order.get("merchant").toString());
+                    smsMessage.setType(SmsTemplate.T005.getKey());
+                    smsMessage.setPhone(order.get("userPhone").toString());
+                    smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，即将到期，请及时还款！");
+                    rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                });
             }
-
         } catch (Exception e) {
             logger.error("明日逾期短信发送异常", e);
         }
@@ -55,13 +57,15 @@ public class MessageTask {
         try {
             List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(31, "=", 0);
             for (Map<String, Object> order : orderList) {
-                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
-                QueueSmsMessage smsMessage = new QueueSmsMessage();
-                smsMessage.setClientAlias(order.get("merchant").toString());
-                smsMessage.setType(SmsTemplate.T005.getKey());
-                smsMessage.setPhone(order.get("userPhone").toString());
-                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日为还款最后期限，请及时还款！");
-                rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                ThreadPoolUtils.executor.execute(() -> {
+                    Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+                    QueueSmsMessage smsMessage = new QueueSmsMessage();
+                    smsMessage.setClientAlias(order.get("merchant").toString());
+                    smsMessage.setType(SmsTemplate.T005.getKey());
+                    smsMessage.setPhone(order.get("userPhone").toString());
+                    smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "元，今日为还款最后期限，请及时还款！");
+                    rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                });
             }
         } catch (Exception e) {
             logger.error("今日逾期短信发送异常", e);
@@ -77,13 +81,15 @@ public class MessageTask {
         try {
             List<Map<String, Object>> orderList = orderService.findByStatusAndOverdays(33, ">", 0);
             for (Map<String, Object> order : orderList) {
-                Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
-                QueueSmsMessage smsMessage = new QueueSmsMessage();
-                smsMessage.setClientAlias(order.get("merchant").toString());
-                smsMessage.setType(SmsTemplate.T005.getKey());
-                smsMessage.setPhone(order.get("userPhone").toString());
-                smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
-                rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                ThreadPoolUtils.executor.execute(() -> {
+                    Order orderInfo = orderService.selectByPrimaryKey(Long.valueOf(order.get("orderId").toString()));
+                    QueueSmsMessage smsMessage = new QueueSmsMessage();
+                    smsMessage.setClientAlias(order.get("merchant").toString());
+                    smsMessage.setType(SmsTemplate.T005.getKey());
+                    smsMessage.setPhone(order.get("userPhone").toString());
+                    smsMessage.setParams("你于" + new DateTime(orderInfo.getCreateTime()).toString("MM月dd日HH:mm:ss") + " 借款" + orderInfo.getBorrowMoney() + "已逾期，避免信用损失请尽快还款！");
+                    rabbitTemplate.convertAndSend(RabbitConst.queue_sms, smsMessage);
+                });
             }
         } catch (Exception e) {
             logger.error("逾期短信发送异常", e);
