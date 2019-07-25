@@ -41,17 +41,17 @@ public class OrderTask {
         }
     }
 
-//    /**
-//     * 每天15点执行
-//     */
-//    @Scheduled(cron = "0 0 15 * * ?")
-//    public void updateToBadDebtTask() {
-//        try {
-//            orderService.updateToBadDebt();
-//        } catch (Exception e) {
-//            logger.error("更新订单为坏账时异常", e);
-//        }
-//    }
+    /**
+     * 每天15点执行
+     */
+    @Scheduled(cron = "0 0 15 * * ?")
+    public void updateToBadDebtTask() {
+        try {
+            orderService.updateToBadDebt();
+        } catch (Exception e) {
+            logger.error("更新订单为坏账时异常", e);
+        }
+    }
 
     /**
      * 找出待机审中，等待超过10分钟的订单重新风控审核
