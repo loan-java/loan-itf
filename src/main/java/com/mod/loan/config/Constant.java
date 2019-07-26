@@ -40,8 +40,15 @@ public class Constant {
     public static String rongZeCallbackUrl;
     public static String rongZeQueryUrl;
     public static String rongZePublicKey;
+    public static String rongZeOrgPrivateKey;
 
-    public static String rongzeOrgPrivateKey;
+
+    public static String bengBengRequestAppId;
+    public static String bengBengCallbackUrl;
+    public static String bengBengQueryUrl;
+    public static String bengBengPublicKey;
+    public static String bengBengOrgPrivateKey;
+
 
 
     public static String OSS_STATIC_BUCKET_NAME;
@@ -49,6 +56,7 @@ public class Constant {
     public static String OSS_ACCESSKEY_ID;
     public static String OSS_ENDPOINT_IN;
     public static String OSS_ACCESS_KEY_SECRET;
+
 
 
     //畅捷支付
@@ -100,8 +108,8 @@ public class Constant {
     }
 
     @Value("${rongze.org.rsa.private.key:}")
-    public void setOrgPrivateKey(String rongzeOrgPrivateKey) {
-        Constant.rongzeOrgPrivateKey = rongzeOrgPrivateKey;
+    public void setOrgPrivateKey(String rongZeOrgPrivateKey) {
+        Constant.rongZeOrgPrivateKey = rongZeOrgPrivateKey;
     }
 
     @Value("${rongze.rsa.public.key:}")
@@ -219,6 +227,32 @@ public class Constant {
     @Value("${oss.endpoint.in:}")
     public void setOssEndpointIn(String ossEndpointIn) {
         Constant.OSS_ENDPOINT_IN = ossEndpointIn;
+    }
+
+
+    @Value("${bengbeng.request.app.id:}")
+    public void setBengBengRequestAppId(String bengBengRequestAppId) {
+        Constant.bengBengRequestAppId = bengBengRequestAppId;
+    }
+
+    @Value("${bengbeng.callback.url:}")
+    public void setBengBengCallbackUrl(String bengBengCallbackUrl) {
+        Constant.bengBengCallbackUrl = bengBengCallbackUrl;
+    }
+
+    @Value("${bengbeng.query.url:}")
+    public void setBengBengQueryUrl(String bengBengQueryUrl) {
+        Constant.bengBengQueryUrl = bengBengQueryUrl;
+    }
+
+    @Value("${bengbeng.rsa.public.key:}")
+    public void setBengBengPublicKey(String bengBengPublicKey) {
+        Constant.bengBengPublicKey = bengBengPublicKey;
+    }
+
+    @Value("${bengbeng.org.rsa.private.key:}")
+    public void setBengBengOrgPrivateKey(String bengBengOrgPrivateKey) {
+        Constant.bengBengOrgPrivateKey = bengBengOrgPrivateKey;
     }
 
 }
