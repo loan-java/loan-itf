@@ -41,7 +41,7 @@ public class Constant {
     public static String rongZeQueryUrl;
     public static String rongZePublicKey;
 
-    public static String orgPrivateKey;
+    public static String rongzeOrgPrivateKey;
 
 
     public static String OSS_STATIC_BUCKET_NAME;
@@ -99,9 +99,9 @@ public class Constant {
         Constant.rongZeQueryUrl = rongZeQueryUrl;
     }
 
-    @Value("${org.rsa.private.key:}")
-    public void setOrgPrivateKey(String orgPrivateKey) {
-        Constant.orgPrivateKey = orgPrivateKey;
+    @Value("${rongze.org.rsa.private.key:}")
+    public void setOrgPrivateKey(String rongzeOrgPrivateKey) {
+        Constant.rongzeOrgPrivateKey = rongzeOrgPrivateKey;
     }
 
     @Value("${rongze.rsa.public.key:}")
