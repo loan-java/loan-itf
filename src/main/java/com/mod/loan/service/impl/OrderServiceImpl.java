@@ -27,7 +27,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     private OrderMapper orderMapper;
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    @Resource
+
+    @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengServiceImpl callBackBengBengServiceImpl;
 
     @Autowired
     private UserMapper userMapper;
@@ -65,6 +68,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 ThreadPoolUtils.executor.execute(() -> {
                     if (order.getSource() == 1) {
                         callBackRongZeService.pushOrderStatus(order);
+                    } else if (order.getSource() == 2) {
+                        callBackBengBengServiceImpl.pushOrderStatus(order);
                     }
                 });
             });
