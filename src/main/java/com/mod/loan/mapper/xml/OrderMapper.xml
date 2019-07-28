@@ -96,11 +96,11 @@
     <select id="findTodayOverdueInfo" resultMap="BaseResultMap">
         SELECT * FROM tb_order
 		WHERE `status` = 33
-		and (DATEDIFF(NOW(),repay_time) = 1
-		or DATEDIFF(NOW(),repay_time) = 7
-		or DATEDIFF(NOW(),repay_time) = 14
-		or DATEDIFF(NOW(),repay_time) = 21
-		or DATEDIFF(NOW(),repay_time) = 28)
+		and DATEDIFF(NOW(),repay_time) >= 1
+-- 		or DATEDIFF(NOW(),repay_time) = 7
+-- 		or DATEDIFF(NOW(),repay_time) = 14
+-- 		or DATEDIFF(NOW(),repay_time) = 21
+-- 		or DATEDIFF(NOW(),repay_time) = 28)
     </select>
 
 </mapper>
