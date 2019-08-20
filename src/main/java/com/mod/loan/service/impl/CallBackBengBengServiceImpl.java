@@ -73,6 +73,6 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
     }
 
     private void postOrderStatus(Map<String, Object> map) throws Exception {
-        BengBengRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
+        BengBengRequestUtil.doPost(Constant.bengBengCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 }
