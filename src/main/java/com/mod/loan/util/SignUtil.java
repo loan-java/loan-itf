@@ -14,7 +14,7 @@ import java.util.*;
  * </p>
  *
  * @author wanghui
- * @version $Id: SignUtil.java, v 0.1 2014-6-17 下午4:26:06 wanghui Exp $
+ * @version $Id: BengBengSignUtil.java, v 0.1 2014-6-17 下午4:26:06 wanghui Exp $
  */
 public class SignUtil {
 

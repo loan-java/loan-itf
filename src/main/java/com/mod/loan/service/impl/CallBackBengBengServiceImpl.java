@@ -6,7 +6,7 @@ import com.mod.loan.config.Constant;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.rongze.RongZeRequestUtil;
+import com.mod.loan.util.bengbeng.BengBengRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -73,6 +73,6 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
     }
 
     private void postOrderStatus(Map<String, Object> map) throws Exception {
-        RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
+        BengBengRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 }
