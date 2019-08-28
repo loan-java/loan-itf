@@ -57,7 +57,7 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
         Map<String, Object> map = new HashMap<>();
         map.put("order_no", order.getOrderNo());
         map.put("order_status", status);
-        map.put("update_time", updateTime);
+        map.put("update_time", updateTime / 1000);
         map.put("remark", "");
         postOrderStatus(map);
         return map;
