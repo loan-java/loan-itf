@@ -3,10 +3,10 @@ package com.mod.loan.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.OrderSourceEnum;
 import com.mod.loan.config.Constant;
-import com.mod.loan.mapper.OrderMapper;
+import com.mod.loan.mapper.OrderUserMapper;
 import com.mod.loan.mapper.UserAuthInfoMapper;
 import com.mod.loan.mapper.UserMapper;
-import com.mod.loan.model.Order;
+import com.mod.loan.model.OrderUser;
 import com.mod.loan.model.User;
 import com.mod.loan.model.UserAuthInfo;
 import com.mod.loan.service.UserAuthInfoService;
@@ -33,7 +33,7 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
     UserAuthInfoMapper userAuthInfoMapper;
 
     @Autowired
-    private OrderMapper orderMapper;
+    private OrderUserMapper orderUserMapper;
 
 
     @Autowired
@@ -47,10 +47,10 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
             list.stream().forEach(userAuthInfo -> {
                 ThreadPoolUtils.executor.execute(() -> {
                     User user = userMapper.selectByPrimaryKey(userAuthInfo.getUid());
-                    Order querOrder = new Order();
-                    querOrder.setOrderNo(userAuthInfo.getOrderNo());
-                    Order order = orderMapper.selectOne(querOrder);
-                    if (order == null) {
+                    OrderUser querOrderUser = new OrderUser();
+                    querOrderUser.setOrderNo(userAuthInfo.getOrderNo());
+                    OrderUser orderUser = orderUserMapper.selectOne(querOrderUser);
+                    if (orderUser == null) {
                         return;
                     }
                     if (StringUtils.isBlank(user.getImgCertFront()) && StringUtils.isNotBlank(userAuthInfo.getIdPositive())) {
@@ -59,9 +59,9 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
                         jsonObject1.put("fileid", userAuthInfo.getIdPositive());
                         String result1 = null;
                         try {
-                            if (OrderSourceEnum.isRongZe(order.getSource())) {
+                            if (OrderSourceEnum.isRongZe(orderUser.getSource())) {
                                 result1 = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.resource.findfile", jsonObject1.toJSONString());
-                            } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
+                            } else if (OrderSourceEnum.isBengBeng(orderUser.getSource())) {
                                 result1 = BengBengRequestUtil.doPost(Constant.bengBengQueryUrl, "api.resource.findfile", jsonObject1.toJSONString());
                             } else {
                                 return;
@@ -86,9 +86,9 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
                         jsonObject2.put("fileid", userAuthInfo.getIdNegative());
                         String result2 = null;
                         try {
-                            if (OrderSourceEnum.isRongZe(order.getSource())) {
+                            if (OrderSourceEnum.isRongZe(orderUser.getSource())) {
                                 result2 = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.resource.findfile", jsonObject2.toJSONString());
-                            } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
+                            } else if (OrderSourceEnum.isBengBeng(orderUser.getSource())) {
                                 result2 = BengBengRequestUtil.doPost(Constant.bengBengQueryUrl, "api.resource.findfile", jsonObject2.toJSONString());
                             } else {
                                 return;
@@ -113,9 +113,9 @@ public class UserAuthInfoServiceImpl implements UserAuthInfoService {
                         jsonObject3.put("fileid", userAuthInfo.getPhotoAssay());
                         String result3 = null;
                         try {
-                            if (OrderSourceEnum.isRongZe(order.getSource())) {
+                            if (OrderSourceEnum.isRongZe(orderUser.getSource())) {
                                 result3 = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.resource.findfile", jsonObject3.toJSONString());
-                            } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
+                            } else if (OrderSourceEnum.isBengBeng(orderUser.getSource())) {
                                 result3 = BengBengRequestUtil.doPost(Constant.bengBengQueryUrl, "api.resource.findfile", jsonObject3.toJSONString());
                             } else {
                                 return;
